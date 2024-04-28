@@ -2,7 +2,7 @@
 #ifdef SERIALCOMMANDSSYSTEM_H // only include this file if serialCommandsSystem.h is included
 
 CloudSerialSystem::CloudSerialSystem(String* cloudSerialObject) {
-    this->cloudSerialObject = cloudSerialObject;
+    this->cloudString = cloudSerialObject;
     this->addCommand("help", help);
 }
 
@@ -65,7 +65,7 @@ void CloudSerialSystem::handlePrintQueue() {
         String message = this->printBuffer.front();
         Serial.println("Printing message: \"" + message + "\" to cloudSerial");
         this->printBuffer.pop();
-        this->cloudSerialObject->operator= (message);
+        this->cloudString->operator= (message);
     }
 }
 

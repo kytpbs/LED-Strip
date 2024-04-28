@@ -14,10 +14,12 @@
 
 
 #include "stringTools.h"
+#define command(name) void name(CloudSerialSystem* cloudSerialSystem, std::vector<String>* argv)
+
 
 class CloudSerialSystem {
     private:
-        String* cloudSerialObject;
+        String* cloudString;
         std::map<String, void (*)(CloudSerialSystem*, std::vector<String>* /*Argv*/)> commandsList;
         std::queue<String> printBuffer;
         bool debug = true;
@@ -28,12 +30,12 @@ class CloudSerialSystem {
          * @param argv The arguments passed to the help command
          * @return void
         */
-        static void help(CloudSerialSystem* cloudSerialSystem, std::vector<String>* argv);
+        static command(help);
     public:
     CloudSerialSystem(String* cloudSerialObject);
     void addCommand(String commandName, void (*function)(CloudSerialSystem*, std::vector<String>*));
     void checkForCommands(String command);
-    void checkForCommands() { this->checkForCommands(*this->cloudSerialObject); };
+    void checkForCommands() { this->checkForCommands(*this->cloudString); };
     void print(String message);
     void debugPrint(String message);
     /**
