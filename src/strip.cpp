@@ -90,6 +90,9 @@ void LedStrip::changeLedColor(uint32_t color) {
 void LedStrip::changeLedColor(CloudColoredLight* color) {
     lastUsedColorObject = color;
     uint32_t color32 = Color(color);
+    if (!color->getSwitch()) {
+        color32 = Color(0,0,0,0);
+    }
     changeLedColor(color32);
 }
 
@@ -123,7 +126,7 @@ void LedStrip::doRainbow(CloudColoredLight* color, unsigned long delayTime) {
         changeMode(Modes::Rainbow);
     }
 
-    rainbowHue = (rainbowHue + 8) % 360;
+    rainbowHue = ((uint)color->getHue() + 8) % 360;
 
     color->setHue(rainbowHue);
 
@@ -198,9 +201,6 @@ void LedStrip::smoothChangeTo(int* newColors, int* oldColors, unsigned long dela
     LOG("Max difference: " + String(abs_max_difference));
 
     if (abs_max_difference == 0) {
-        for (int i = 0; i < 4; i++) {
-            analogWrite(pins[i], newColors[i]);
-        }
         return;
     }
 
@@ -216,6 +216,9 @@ void LedStrip::smoothChangeTo(int* newColors, int* oldColors, unsigned long dela
             if (difference > 0) {
                 newColor += i;
                 difference -= 1;
+            }
+            if (difference == 0) {
+                newColor = newColors[j];
             }
 
             analogWrite(pins[j], newColor);
