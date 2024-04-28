@@ -1,6 +1,6 @@
 #include "CloudSerial.h" // private library, on lib/CloudSerial
-#include "stringTools.h"
-#define command(name) void name(CloudSerialSystem* cloudSerialSystem, std::vector<String>* argv)
+#include "stringTools.h" // private library, on lib/stringTools
+
 
 command(ping);
 command(echo);
