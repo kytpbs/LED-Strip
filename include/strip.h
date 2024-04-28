@@ -118,7 +118,6 @@ class LedStrip {
         void smoothChangeTo(uint32_t color, unsigned long delayTime);
         void smoothChangeTo(uint8_t red, uint8_t green, uint8_t blue, uint8_t white);
         void smoothChangeTo(uint8_t red, uint8_t green, uint8_t blue, uint8_t white, unsigned long delayTime);
-        void smoothChangeTo(uint8_t* newColors, uint8_t* oldColors, unsigned long delayTime);
         void smoothChangeTo(int* newColors, int* oldColors, unsigned long delayTime);
         int* getAllDifferences(uint32_t color);
         int* getAllDifferences(uint8_t red, uint8_t green, uint8_t blue, uint8_t white);
