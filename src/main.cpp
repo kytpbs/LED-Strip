@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "CloudSerial.h" // private library, on lib/CloudSerial
+#include "OTA_System.h"
 #include "arduino_secrets.h"
 #include "Constants.h"
 #include "thingProperties.h"
@@ -40,6 +41,7 @@ void setup() {
 void onCloudSync() {
   Serial.println("Synced with IoT Cloud");
   connectedToCloud = true;
+  setupOTA(&cloudCLI);
 }
 
 void onCloudDisconnect() {
@@ -70,6 +72,7 @@ void loop() {
   ArduinoCloud.update();
   strip.update();
   if (connectedToCloud) { // only print the queue if we are connected to the cloud, else we will lose the print queue.
+    handleOTA(); // handle OTA updates, only if we are connected to the cloud (should change to only connected to wifi, will do later)
     cloudCLI.handlePrintQueue(); // will print the queue if there is something to print, else will do nothing
   }
 }
@@ -135,7 +138,7 @@ void onNightModeChange()  {
   strip.setNightMode(nightMode.isActive());
 }
 
-void onCloudSerialChange() { // will give the last Command, use the internal library to handle it
+void onCloudSerialChange() {
   Serial.print("New Cloud Serial Command: ");
   Serial.println(cloudSerial);
 
