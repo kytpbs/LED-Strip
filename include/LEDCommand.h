@@ -1,6 +1,6 @@
 #pragma once
 #include <Arduino.h>
-Z
+
 typedef std::function<void(void)> Runnable;
 class LEDCommand {
     private:
