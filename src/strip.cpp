@@ -126,7 +126,7 @@ void LedStrip::smoothChangeTo(SimpleColor color) {
 
 void LedStrip::switchToRainbow() {
     addToCallList(LEDCommand([=](void) {
-        SimpleColor color = ColorUtils::getColorFromHSV(this->rainbowHue, 100, 100);
+        SimpleColor color = SimpleColor(this->rainbowHue, 100, 100);
         fillColor(color);
         this->rainbowHue += 8;
         this->rainbowHue %= 360;
