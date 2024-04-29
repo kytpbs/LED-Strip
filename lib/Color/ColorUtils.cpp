@@ -41,11 +41,6 @@ void ColorUtils::getRGBfromHSV(float hue, float sat, float bri, uint8_t& r, uint
     b = lrint((fB + fM) * 255);
 }
 
-SimpleColor ColorUtils::getColorFromHSV(float hue, float sat, float bri) {
-    uint8_t r, g, b;
-    getRGBfromHSV(hue, sat, bri, r, g, b);
-    return SimpleColor(r, g, b, 0);
-}
 int ColorUtils::getMaxElement(int* arr, int size) {
     int max = abs(arr[0]);
     for (int i = 0; i < size; i++) {

@@ -1,6 +1,5 @@
 #pragma once
 #include <Arduino.h>
-#include "Color.h"
 namespace ColorUtils {
     /**
      * @brief Convert RGB to HSV 
@@ -12,8 +11,7 @@ namespace ColorUtils {
      * @param sat the saturation
      * @param bri the brightness/value
     */
-    void getRGBfromHSV(float hue, float sat, float bri, uint8_t *r, uint8_t *g, uint8_t *b);
+    void getRGBfromHSV(float hue, float sat, float bri, uint8_t& r, uint8_t& g, uint8_t& b);
 
-    SimpleColor getColorFromHSV(float hue, float sat, float bri);
     int getMaxElement(int* arr, int size);
 }
