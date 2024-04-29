@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
-
-typedef void (*Runnable)();
+Z
+typedef std::function<void(void)> Runnable;
 class LEDCommand {
     private:
         Runnable taskToRun;
