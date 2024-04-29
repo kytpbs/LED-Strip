@@ -114,7 +114,7 @@ void printModeChange() {
 */
 void onColorChange() {
   printColorChange();
-  strip.changeLedColor(&color);
+  strip.fillColor(SimpleColor(color.getHue(), color.getSaturation(), color.getBrightness()));
 }
 
 /*
@@ -123,8 +123,8 @@ void onColorChange() {
 */
 void onModeChange()  {
   printModeChange();
-  // do not call onColorChange when mode is normal, as it will be called by the strip.changeMode() function
-  strip.changeMode(Modes(mode));
+  // do not call onColorChange when mode is normal, as it will be called by the strip.changeModeTo() function
+  strip.changeModeTo(Modes(mode));
 }
 
 
