@@ -42,4 +42,6 @@ class SmoothPin {
          * so it can be used to sync with other variables.
         */
         int getCurrentValue() { return this->currentValue; }
+        int getTargetValue() { return this->targetValue; }
+        bool isChanging() { return this->currentValue != this->targetValue; };
 };
