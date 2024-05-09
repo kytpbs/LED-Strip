@@ -61,4 +61,10 @@ class LedStrip {
          * @param mode mode to change to
         */
         void changeModeTo(Modes mode);
+
+        Modes getCurrentMode() {
+            return currentMode;
+        };
+
+        SimpleColor getCurrentColor();
 };

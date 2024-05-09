@@ -64,6 +64,9 @@ void LedStrip::setNightMode(bool active) {
     }
 }
 
+SimpleColor LedStrip::getCurrentColor() {
+    return SimpleColor(this->redPin.getCurrentValue(), this->greenPin.getCurrentValue(), this->bluePin.getCurrentValue(), this->whitePin.getCurrentValue());
+}
 
 /* PRIVATE FUNCTIONS */
 void LedStrip::smoothChangeTo(SimpleColor color, unsigned long delayTime) {
