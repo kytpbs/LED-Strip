@@ -68,6 +68,12 @@ SimpleColor LedStrip::getCurrentColor() {
     return SimpleColor(this->redPin.getCurrentValue(), this->greenPin.getCurrentValue(), this->bluePin.getCurrentValue(), this->whitePin.getCurrentValue());
 }
 
+void LedStrip::getRGB(uint8_t &r, uint8_t &g, uint8_t &b) {
+    r = this->redPin.getCurrentValue();
+    g = this->greenPin.getCurrentValue();
+    b = this->bluePin.getCurrentValue();
+}
+
 /* PRIVATE FUNCTIONS */
 void LedStrip::smoothChangeTo(SimpleColor color, unsigned long delayTime) {
     this->redPin.write(255 - color.red, delayTime);
