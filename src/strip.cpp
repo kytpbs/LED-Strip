@@ -42,7 +42,7 @@ void LedStrip::changeModeTo(Modes mode) {
         fillColor(this->currentColor);
         break;
     case Modes::Off:
-        fillColor(SimpleColor());
+        smoothChangeTo(SimpleColor());
         break;
     case Modes::Breathe:
         //TODO: implement this
