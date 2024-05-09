@@ -82,8 +82,11 @@ void loop() {
 
 void syncStripToCloud() {
   // Sync color
-  SimpleColor stripColor = strip.getCurrentColor();
-  color.getValue().setColorRGB(stripColor.red, stripColor.green, stripColor.blue);
+  u_int8_t red;
+  u_int8_t green;
+  u_int8_t blue;
+  strip.getRGB(red, green, blue);
+  color.getValue().setColorRGB(red, green, blue);
   // Sync mode
   mode = strip.getCurrentMode();
 }
