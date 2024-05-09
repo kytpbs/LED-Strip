@@ -41,6 +41,50 @@ void ColorUtils::getRGBfromHSV(float hue, float sat, float bri, uint8_t& r, uint
     b = lrint((fB + fM) * 255);
 }
 
+void ColorUtils::getHSVfromRGB(uint8_t r, uint8_t g, uint8_t b, float& hue, float& sat, float&bri) {
+  float temp[3];
+  float max, min, delta;
+  uint8_t imax;
+  temp[0] = (float)r / 255;
+  temp[1] = (float)g / 255;
+  temp[2] = (float)b / 255;
+  max = temp[0];
+  imax = 0;
+  min = temp[0];
+
+  for (uint8_t j = 0; j < 3; j++) {
+
+    if (temp[j] >= max) {
+      max = temp[j];
+      imax = j;
+    }
+    if (temp[j] <= min) {
+      min = temp[j];
+    }
+  }
+
+  delta = max - min;
+  if (delta == 0) {
+    hue = 0;
+  } else if (imax == 0) {
+
+    hue = 60 * fmod((temp[1] - temp[2]) / delta, 6);
+  } else if (imax == 1) {
+    hue = 60 * (((temp[2] - temp[0]) / delta) + 2);
+  } else if (imax == 2) {
+    hue = 60 * (((temp[0] - temp[1]) / delta) + 4);
+  }
+
+  if (max == 0) {
+    sat = 0;
+  } else {
+    sat = (delta / max) * 100;
+  }
+
+  bri = max * 100;
+}
+
+
 int ColorUtils::getMaxElement(int* arr, int size) {
     int max = abs(arr[0]);
     for (int i = 0; i < size; i++) {
