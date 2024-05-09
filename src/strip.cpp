@@ -45,10 +45,10 @@ void LedStrip::changeModeTo(Modes mode) {
         fillColor(SimpleColor());
         break;
     case Modes::Breathe:
-        switchToRainbow();
+        //TODO: implement this
         break;
     case Modes::Rainbow:
-        //TODO: implement this
+        switchToRainbow();
         break;
     }
 }
