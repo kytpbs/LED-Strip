@@ -10,7 +10,16 @@ class SmoothPin {
         unsigned long lastChangeTime;
         unsigned long delayTime;
     public:
+        SmoothPin() = default;
         SmoothPin(uint8_t pin);
+        /**
+         * @brief Write value to pin.
+         * gradually changes to value every time update() is called without delay.
+         * 
+         * @note use SmoothPin::instantWrite() if you want to change value instantly
+         * 
+         * @param value value to write
+        */
         void write(int value);
         /**
          * @brief Write value to pin instantly instead of changing gradually
