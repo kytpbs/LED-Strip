@@ -14,7 +14,7 @@ public:
      * All values are set to 0, which is black
     */
     SimpleColor() = default;
-    
+
     /**
      * @brief Construct a new SimpleColor object
      * @param red Red of rgbw color
@@ -31,4 +31,8 @@ public:
      * @param bri Brightness of hsv color (0-100)
     */
     SimpleColor(float hue, float sat, float bri);
+
+    int getHue();
+    int getSaturation();
+    int getBrightness();
 };
