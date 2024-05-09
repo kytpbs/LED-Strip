@@ -19,7 +19,9 @@ void setup();
 void onCloudSync();
 void onCloudDisconnect();
 void cloudSetup();
+
 void loop();
+void syncStripToCloud();
 void printColorChange();
 void printModeChange();
 // onVariableChange() functions are defined in thingProperties.h
@@ -74,7 +76,16 @@ void loop() {
   if (connectedToCloud) { // only print the queue if we are connected to the cloud, else we will lose the print queue.
     handleOTA(); // handle OTA updates, only if we are connected to the cloud (should change to only connected to wifi, will do later)
     cloudCLI.handlePrintQueue(); // will print the queue if there is something to print, else will do nothing
+    syncStripToCloud();
   }
+}
+
+void syncStripToCloud() {
+  // Sync color
+  SimpleColor stripColor = strip.getCurrentColor();
+  color.getValue().setColorRGB(stripColor.red, stripColor.green, stripColor.blue);
+  // Sync mode
+  mode = strip.getCurrentMode();
 }
 
 void printColorChange() {
