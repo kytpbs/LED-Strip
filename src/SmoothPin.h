@@ -33,4 +33,13 @@ class SmoothPin {
         */
         void write(int value, unsigned int totalDelayMillis);
         void update();
+        /**
+         * @brief Get current value of pin
+         * 
+         * @return current value of pin
+         * 
+         * @note this value is updated with every call to update()
+         * so it can be used to sync with other variables.
+        */
+        int getCurrentValue() { return this->currentValue; }
 };
