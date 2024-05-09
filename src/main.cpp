@@ -71,12 +71,13 @@ void cloudSetup() {
 }
 
 void loop() {
+  syncStripToCloud();
   ArduinoCloud.update();
   strip.update();
   if (connectedToCloud) { // only print the queue if we are connected to the cloud, else we will lose the print queue.
-    handleOTA(); // handle OTA updates, only if we are connected to the cloud (should change to only connected to wifi, will do later)
     cloudCLI.handlePrintQueue(); // will print the queue if there is something to print, else will do nothing
-    syncStripToCloud();
+    // handle OTA updates, only if we are connected to the cloud and the led is not changing due to it taking to much of the loopTime
+    if (!strip.isChanging()) handleOTA(); 
   }
 }
 
