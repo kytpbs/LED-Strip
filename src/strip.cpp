@@ -103,3 +103,7 @@ void LedStrip::changeCallListTo(LEDCommand command) {
     this->callList.clear();
     this->callList.push_back(command);
 }
+
+bool LedStrip::isChanging() {
+    return this->redPin.isChanging() || this->greenPin.isChanging() || this->bluePin.isChanging() || this->whitePin.isChanging();
+}
