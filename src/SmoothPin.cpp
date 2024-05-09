@@ -9,6 +9,12 @@ SmoothPin::SmoothPin(uint8_t pin) {
     this->delayBetweenTime = 0;
 }
 
+void SmoothPin::instantWrite(int value) {
+    this->currentValue = value;
+    this->targetValue = value;
+    analogWrite(this->pin, this->currentValue);
+}
+
 void SmoothPin::write(int value, unsigned int totalDelayMillis) {
     this->targetValue = value;
     this->lastChangeTime = 0;
