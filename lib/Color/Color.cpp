@@ -7,13 +7,6 @@ SimpleColor::SimpleColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t white
     this->white = white;
 };
 
-SimpleColor::SimpleColor() {
-    this->red = 0;
-    this->green = 0;
-    this->blue = 0;
-    this->white = 0;
-};
-
 SimpleColor::SimpleColor(float hue, float sat, float bri) {
     
     ColorUtils::getRGBfromHSV(hue, sat, bri, this->red, this->green, this->blue);
