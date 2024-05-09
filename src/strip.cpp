@@ -87,10 +87,13 @@ void LedStrip::smoothChangeTo(SimpleColor color) {
 }
 
 void LedStrip::switchToRainbow() {
-    addToCallList(LEDCommand([=](void) {
+    changeCallListTo(LEDCommand([=](void) {
+        if (this->isChanging()) {
+            return;
+        }
         SimpleColor color = SimpleColor(this->rainbowHue, 100, 100);
-        fillColor(color);
-        this->rainbowHue += 8;
+        this->smoothChangeTo(color, 125);
+        this->rainbowHue += 1;
         this->rainbowHue %= 360;
     },true, "Rainbow"));
 }
