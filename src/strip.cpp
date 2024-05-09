@@ -30,15 +30,6 @@ void LedStrip::update() {
     }
 }
 
-void LedStrip::addToCallList(LEDCommand command) {
-    this->callList.push_back(command);
-}
-
-void LedStrip::changeCallListTo(LEDCommand command) {
-    this->callList.clear();
-    this->callList.push_back(command);
-}
-
 void LedStrip::fillColor(SimpleColor color) {
     smoothChangeTo(color);
     this->currentColor = color;
@@ -95,3 +86,11 @@ void LedStrip::switchToRainbow() {
     },true, "Rainbow"));
 }
 
+void LedStrip::addToCallList(LEDCommand command) {
+    this->callList.push_back(command);
+}
+
+void LedStrip::changeCallListTo(LEDCommand command) {
+    this->callList.clear();
+    this->callList.push_back(command);
+}
