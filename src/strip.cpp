@@ -33,6 +33,7 @@ void LedStrip::update() {
 void LedStrip::fillColor(SimpleColor color) {
     smoothChangeTo(color);
     this->currentColor = color;
+    rainbowHue = color.getHue();
 }
 
 void LedStrip::changeModeTo(Modes mode) {
