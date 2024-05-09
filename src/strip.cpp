@@ -70,10 +70,10 @@ SimpleColor LedStrip::getCurrentColor() {
 
 /* PRIVATE FUNCTIONS */
 void LedStrip::smoothChangeTo(SimpleColor color, unsigned long delayTime) {
-    this->redPin.write(color.red, delayTime);
-    this->greenPin.write(color.green, delayTime);
-    this->bluePin.write(color.blue, delayTime);
-    this->whitePin.write(color.white, delayTime);
+    this->redPin.write(255 - color.red, delayTime);
+    this->greenPin.write(255 - color.green, delayTime);
+    this->bluePin.write(255 - color.blue, delayTime);
+    this->whitePin.write(255 - color.white, delayTime);
 }
 
 void LedStrip::smoothChangeTo(SimpleColor color) {
