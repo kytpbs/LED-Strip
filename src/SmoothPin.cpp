@@ -18,7 +18,11 @@ void SmoothPin::instantWrite(int value) {
 void SmoothPin::write(int value, unsigned int totalDelayMillis) {
     this->targetValue = value;
     this->lastChangeTime = 0;
-    this->delayTime = totalDelayMillis / abs(this->currentValue - value);
+    unsigned int diff = abs(this->currentValue - value);
+    if (diff == 0) {
+        return;
+    }
+    this->delayBetweenTime = totalDelayMillis / diff;
 }
 
 void SmoothPin::write(int value) {

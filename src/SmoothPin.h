@@ -8,7 +8,7 @@ class SmoothPin {
         int currentValue;
         int targetValue;
         unsigned long lastChangeTime;
-        unsigned long delayTime;
+        unsigned long delayBetweenTime;
     public:
         SmoothPin() = default;
         SmoothPin(uint8_t pin);
