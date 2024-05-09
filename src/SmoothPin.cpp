@@ -6,7 +6,7 @@ SmoothPin::SmoothPin(uint8_t pin) {
     this->currentValue = 0;
     this->targetValue = 0;
     this->lastChangeTime = 0;
-    this->delayTime = 0;
+    this->delayBetweenTime = 0;
 }
 
 void SmoothPin::write(int value, unsigned int totalDelayMillis) {
@@ -25,7 +25,7 @@ void SmoothPin::update() {
     }
 
     unsigned long currentTime = millis();
-    if (currentTime - this->lastChangeTime > this->delayTime) {
+    if (currentTime - this->lastChangeTime > this->delayBetweenTime) {
         if (this->currentValue < this->targetValue) {
             this->currentValue++;
         } else {
