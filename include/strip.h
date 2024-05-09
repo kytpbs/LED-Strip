@@ -2,6 +2,7 @@
 #include <list>
 #include <Color.h>
 #include "LEDCommand.h"
+#include "SmoothPin.h"
 
 enum Modes {
   Normal,
@@ -19,10 +20,10 @@ class LedStrip {
         uint16_t rainbowHue; // can't do uint8_t because it will overflow
         SimpleColor currentColor;
 
-        uint8_t redPin;
-        uint8_t greenPin;
-        uint8_t bluePin;
-        uint8_t whitePin;
+        SmoothPin redPin;
+        SmoothPin greenPin;
+        SmoothPin bluePin;
+        SmoothPin whitePin;
 
         std::list<LEDCommand> callList;
 
@@ -35,6 +36,7 @@ class LedStrip {
         void addToCallList(LEDCommand command);
         void changeCallListTo(LEDCommand command);
     public:
+        LedStrip() = default;
         LedStrip(uint8_t redPin, uint8_t greenPin, uint8_t bluePin, uint8_t whitePin);
         /**
          * @brief Update led strip, must be called in loop repeatedly.
@@ -51,14 +53,12 @@ class LedStrip {
         /**
          * @brief Change color of led strip
          * @param color color to change to
-         * @note This will not work if update() or this function is not called in loop
         */
         void fillColor(SimpleColor color);
 
         /**
          * @brief Change mode of led strip
          * @param mode mode to change to
-         * @note This will not work if update() or this function is not called in loop
         */
         void changeModeTo(Modes mode);
 };
