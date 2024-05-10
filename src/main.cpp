@@ -5,10 +5,12 @@
 #include "Constants.h"
 #include "thingProperties.h"
 #include "strip.h"
+#include "stripController.h"
 
 #include "commands.h"
 
 LedStrip strip(RED_PIN, GREEN_PIN, BLUE_PIN, WHITE_PIN);
+stripController::Status ledStatus = stripController::Status::UNKNOWN;
 CloudSerialSystem cloudCLI(&cloudSerial);
 
 bool connectedToCloud = false;
@@ -44,10 +46,12 @@ void onCloudSync() {
   Serial.println("Synced with IoT Cloud");
   connectedToCloud = true;
   setupOTA(&cloudCLI);
+  ledStatus = stripController::Status::SYNCED;
 }
 
 void onCloudDisconnect() {
   Serial.println("Disconnected from IoT Cloud");
+  ledStatus = stripController::Status::DISCONNECTED;
   connectedToCloud = false;
 }
 
@@ -74,6 +78,7 @@ void loop() {
   syncStripToCloud();
   ArduinoCloud.update();
   strip.update();
+  stripController::updateLEDStatus(&strip, ledStatus);
   if (connectedToCloud) { // only print the queue if we are connected to the cloud, else we will lose the print queue.
     cloudCLI.handlePrintQueue(); // will print the queue if there is something to print, else will do nothing
     // handle OTA updates, only if we are connected to the cloud and the led is not changing due to it taking to much of the loopTime
