@@ -8,6 +8,7 @@ enum Modes {
   Normal,
   Breathe,
   Rainbow,
+  Blink,
   Off
 };
 
@@ -17,6 +18,8 @@ class LedStrip {
         Modes currentMode;
         Modes lastMode; // used for night mode
         bool nightModeActive;
+        bool isON; // used by blink and breathe
+        unsigned long lastBlinkTime; // only used by blink
         uint16_t rainbowHue; // can't do uint8_t because it will overflow
         SimpleColor currentColor;
 
@@ -30,7 +33,10 @@ class LedStrip {
         void smoothChangeTo(SimpleColor color, unsigned long delayTime);
         void smoothChangeTo(SimpleColor color);
 
+        void instantChangeTo(SimpleColor color);
+
         void switchToRainbow();
+        void switchToBlink();
         void switchToBreathe();
 
         void addToCallList(LEDCommand command);
