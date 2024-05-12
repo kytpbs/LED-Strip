@@ -63,6 +63,13 @@ class LedStrip {
         void fillColor(SimpleColor color);
 
         /**
+         * @brief Instantly change color of led strip
+         * @param color color to change to
+         * @warning This will not be smooth, use fillColor for smooth color change
+        */
+        void instantFillColor(SimpleColor color);
+
+        /**
          * @brief Change mode of led strip
          * @param mode mode to change to
         */
@@ -74,5 +81,8 @@ class LedStrip {
 
         SimpleColor getCurrentColor();
         bool isChanging();
+        bool isNightMode() {
+            return nightModeActive;
+        }
         void getRGB(uint8_t &r, uint8_t &g, uint8_t &b);
 };

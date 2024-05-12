@@ -36,6 +36,12 @@ void LedStrip::fillColor(SimpleColor color) {
     rainbowHue = color.getHue();
 }
 
+void LedStrip::instantFillColor(SimpleColor color) {
+    instantChangeTo(color);
+    this->currentColor = color;
+    rainbowHue = color.getHue();
+}
+
 void LedStrip::changeModeTo(Modes mode) {
     currentMode = mode;
     switch (mode) {
@@ -118,9 +124,9 @@ void LedStrip::switchToBlink() {
         lastBlinkTime = millis();
         
         if (isON) {
-            this->smoothChangeTo(SimpleColor(), 1000);
+            this->instantChangeTo(SimpleColor());
         } else {
-            this->smoothChangeTo(this->currentColor, 1000);
+            this->instantChangeTo(this->currentColor);
         }
 
         isON = !isON;
