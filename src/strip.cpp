@@ -54,10 +54,13 @@ void LedStrip::changeModeTo(Modes mode) {
         callList.clear();
         break;
     case Modes::Breathe:
-        //TODO: implement this
+        switchToBreathe();
         break;
     case Modes::Rainbow:
         switchToRainbow();
+        break;
+    case Modes::Blink:
+        switchToBlink();
         break;
     }
 }
