@@ -14,11 +14,13 @@ stripController::Status ledStatus = stripController::Status::UNKNOWN;
 CloudSerialSystem cloudCLI(&cloudSerial);
 
 bool connectedToCloud = false;
+bool syncedToCloud = false;
 
 /* START FUNCTION DEFINITIONS */
 
 void setup();
 void onCloudSync();
+void onCloudConnect();
 void onCloudDisconnect();
 void cloudSetup();
 
@@ -44,15 +46,21 @@ void setup() {
 
 void onCloudSync() {
   Serial.println("Synced with IoT Cloud");
-  connectedToCloud = true;
-  setupOTA(&cloudCLI);
+  syncedToCloud = true;
   ledStatus = stripController::Status::SYNCED;
+}
+
+void onCloudConnect() {
+  Serial.println("Connected to IoT Cloud");
+  connectedToCloud = true;
+  ledStatus = stripController::Status::CONNECTED;
+  setupOTA(&cloudCLI);
 }
 
 void onCloudDisconnect() {
   Serial.println("Disconnected from IoT Cloud");
   ledStatus = stripController::Status::DISCONNECTED;
-  connectedToCloud = false;
+  syncedToCloud = false;
 }
 
 void cloudSetup() {
@@ -61,6 +69,7 @@ void cloudSetup() {
 
   // Connect to Arduino IoT Cloud
   ArduinoCloud.begin(ArduinoIoTPreferredConnection);
+  ArduinoCloud.addCallback(ArduinoIoTCloudEvent::CONNECT, onCloudConnect);
   ArduinoCloud.addCallback(ArduinoIoTCloudEvent::SYNC, onCloudSync);
   ArduinoCloud.addCallback(ArduinoIoTCloudEvent::DISCONNECT, onCloudDisconnect);
   /*
@@ -70,20 +79,21 @@ void cloudSetup() {
      The default is 0 (only errors).
      Maximum is 4
   */
-  setDebugMessageLevel(2);
+  setDebugMessageLevel(0);
   ArduinoCloud.printDebugInfo();
 }
 
 void loop() {
   syncStripToCloud();
   ArduinoCloud.update();
-  strip.update();
+  // First updateLEDStatus, as it will change the color of the strip or the mode
   stripController::updateLEDStatus(&strip, ledStatus);
-  if (connectedToCloud) { // only print the queue if we are connected to the cloud, else we will lose the print queue.
+  strip.update();
+  if (syncedToCloud) { // only print the queue if we are connected to the cloud, else we will lose the print queue.
     cloudCLI.handlePrintQueue(); // will print the queue if there is something to print, else will do nothing
-    // handle OTA updates, only if we are connected to the cloud and the led is not changing due to it taking to much of the loopTime
-    if (!strip.isChanging()) handleOTA(); 
   }
+  // handle OTA updates, only if we are connected to the wifi and the led is not changing due to it taking to much of the loopTime
+  if (connectedToCloud && !strip.isChanging()) handleOTA();
 }
 
 void syncStripToCloud() {
