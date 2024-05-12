@@ -1,6 +1,18 @@
 #include "stripController.h"
 
+stripController::Status lastStatus = stripController::SYNCED;
+
 void stripController::updateLEDStatus(LedStrip* strip, Status status) {
+    if (lastStatus == status) {
+        return;
+    }
+
+    if (strip->isNightMode()) {
+        // early return as it is in night mode
+        // and we don't want to disturb the user.
+        return;
+    }
+
     switch (status) {
         case CONNECTED: case SYNCED:
             // early return as the strip is already set to the connected color
@@ -24,4 +36,5 @@ void stripController::updateLEDStatus(LedStrip* strip, Status status) {
             break;
     }
     strip->changeModeTo(Modes::Blink);
+    lastStatus = status;
 }
