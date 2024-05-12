@@ -14,10 +14,13 @@ void stripController::updateLEDStatus(LedStrip* strip, Status status) {
     }
 
     switch (status) {
-        case CONNECTED: case SYNCED:
+        case SYNCED:
             // early return as the strip is already set to the connected color
             return;
             break;
+        case CONNECTED:
+            strip->fillColor(SimpleColor(0, 255, 0, 0));
+            break; 
         case UNKNOWN:
             // blink cyan when unknown
             strip->fillColor(SimpleColor(0, 100, 255, 0));
