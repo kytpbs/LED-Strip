@@ -117,7 +117,7 @@ void LedStrip::switchToRainbow() {
 void LedStrip::switchToBlink() {
     isON = false;
     changeCallListTo(LEDCommand([=](void) {
-        if (millis() - lastBlinkTime < 1000) {
+        if (millis() - lastBlinkTime < 250) {
             return;
         }
 
