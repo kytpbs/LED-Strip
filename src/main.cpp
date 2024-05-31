@@ -39,6 +39,7 @@ void setup() {
   // This delay gives the chance to wait for a Serial Monitor without blocking if none is found
   delay(1000);
 
+  strip.instantFillColor(SimpleColor(0, 0, 0, 0));
   // Setup Cloud
   cloudSetup();
   setupCommands(&cloudCLI);
