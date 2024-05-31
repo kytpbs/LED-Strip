@@ -135,6 +135,9 @@ void printModeChange() {
     case Modes::Rainbow:
       Serial.println("Rainbow");
       break;
+    case Modes::Blink:
+      Serial.println("Blink");
+      break;
     case Modes::Off:
       Serial.println("Off");
       break;
