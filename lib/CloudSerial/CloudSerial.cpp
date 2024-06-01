@@ -1,6 +1,8 @@
 #include "CloudSerial.h"
 #ifdef SERIALCOMMANDSSYSTEM_H // only include this file if serialCommandsSystem.h is included
 
+bool firstRun = true;
+
 CloudSerialSystem::CloudSerialSystem(String* cloudSerialObject) {
     this->cloudString = cloudSerialObject;
     this->addCommand("help", help);
@@ -46,7 +48,7 @@ void CloudSerialSystem::checkForCommands(String command) {
 }
 
 void CloudSerialSystem::debugPrint(String message) {
-    if (this->debug) {
+    if (this->getDebug()) {
         this->print("DEBUG - " + message); // only print to cloudSerial if debug is enabled
     }
     Serial.println("DEBUG - " + message); // Always print to serial
@@ -54,14 +56,22 @@ void CloudSerialSystem::debugPrint(String message) {
 
 void CloudSerialSystem::setDebug(bool debug) {
     this->debug = debug;
+    this->preferences.begin("cloudSerial", false);
+    this->preferences.putBool("debug", debug);
+    this->preferences.end();
 }
 
 bool CloudSerialSystem::getDebug() {
+    if (firstRun) {
+        this->preferences.begin("cloudSerial", true);
+        this->debug = this->preferences.getBool("debug", true);
+        this->preferences.end();
+    }
     return this->debug;
 } 
 
 void CloudSerialSystem::handlePrintQueue() {
-    if (this->printBuffer.size() > 0 && millis() - this->lastPrint > delayBetweenPrints){
+    if (this->printBuffer.size() > 0 && millis() - this->lastPrint > delayBetweenPrints) {
         String message = this->printBuffer.front();
         Serial.println("Printing message: \"" + message + "\" to cloudSerial");
         this->printBuffer.pop();
