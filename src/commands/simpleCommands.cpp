@@ -1,23 +1,12 @@
-#include "commands.h"
+#include "CloudSerial.h" // private library, on lib/CloudSerial
+#include <WiFi.h>
+#include "stringTools.h" // private library, on lib/stringTools
 
-void addCommand(Command function, String commandName);
+#include "commands/commandHelper.h"
+
 
 // in this define, we add it to the list of commands
 static std::map<String, Command> tempCommandsList;
-#define command(name) void name(CloudSerialSystem* cloudSerialSystem, std::vector<String>* argv)
-
-// do a dirty constructor getting auto called hack to run addCommand
-// this seems to be the only clean way, at least according to my research 
-#define createCommand(name) \
-command(name); \
-struct name##_registrar { \
-    name##_registrar() { \
-        addCommand(&name, #name); \
-    } \
-}; \
-static name##_registrar _registrar_##name; \
-command(name)
-
 
 createCommand(ping) {
     cloudSerialSystem->print("pong");
@@ -63,10 +52,13 @@ void addCommand(Command function, String commandName) {
     tempCommandsList[commandName] = function;
 }
 
-void setupCommands(CloudSerialSystem* cloudSerialSystem) {
-    for (auto const& command : tempCommandsList) {
-        cloudSerialSystem->addCommand(command.first, command.second);
+
+namespace simpleCommands {
+    void setupCommands(CloudSerialSystem* cloudSerialSystem) {
+        for (auto const& command : tempCommandsList) {
+            cloudSerialSystem->addCommand(command.first, command.second);
+        }
+        // we clear the list because it will never be used again
+        tempCommandsList.clear();
     }
-    // we clear the list because it will never be used again
-    tempCommandsList.clear();
 }
