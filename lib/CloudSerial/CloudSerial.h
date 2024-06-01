@@ -12,6 +12,7 @@
 #include <vector>
 #include <queue>
 
+#define delayBetweenPrints 500 // The delay between prints in the print queue in milliseconds
 
 #include "stringTools.h"
 #define command(name) void name(CloudSerialSystem* cloudSerialSystem, std::vector<String>* argv)
@@ -22,6 +23,7 @@ class CloudSerialSystem {
         String* cloudString;
         std::map<String, void (*)(CloudSerialSystem*, std::vector<String>* /*Argv*/)> commandsList;
         std::queue<String> printBuffer;
+        long lastPrint = 0;
         bool debug = true;
         /**
          * @brief Print the help message for the commands, listing all the commands

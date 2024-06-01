@@ -36,6 +36,12 @@ void LedStrip::fillColor(SimpleColor color) {
     rainbowHue = color.getHue();
 }
 
+void LedStrip::instantFillColor(SimpleColor color) {
+    instantChangeTo(color);
+    this->currentColor = color;
+    rainbowHue = color.getHue();
+}
+
 void LedStrip::changeModeTo(Modes mode) {
     currentMode = mode;
     switch (mode) {
@@ -48,10 +54,13 @@ void LedStrip::changeModeTo(Modes mode) {
         callList.clear();
         break;
     case Modes::Breathe:
-        //TODO: implement this
+        switchToBreathe();
         break;
     case Modes::Rainbow:
         switchToRainbow();
+        break;
+    case Modes::Blink:
+        switchToBlink();
         break;
     }
 }
@@ -89,6 +98,13 @@ void LedStrip::smoothChangeTo(SimpleColor color) {
     smoothChangeTo(color, 1000);
 }
 
+void LedStrip::instantChangeTo(SimpleColor color) {
+    this->redPin.instantWrite(255 - color.red);
+    this->greenPin.instantWrite(255 - color.green);
+    this->bluePin.instantWrite(255 - color.blue);
+    this->whitePin.instantWrite(255 - color.white);
+}
+
 void LedStrip::switchToRainbow() {
     changeCallListTo(LEDCommand([=](void) {
         if (this->isChanging()) {
@@ -99,6 +115,42 @@ void LedStrip::switchToRainbow() {
         this->rainbowHue += 1;
         this->rainbowHue %= 360;
     },true, "Rainbow"));
+}
+
+void LedStrip::switchToBlink() {
+    isON = false;
+    changeCallListTo(LEDCommand([=](void) {
+        if (millis() - lastBlinkTime < 250) {
+            return;
+        }
+
+        lastBlinkTime = millis();
+        
+        if (isON) {
+            this->instantChangeTo(SimpleColor());
+        } else {
+            this->instantChangeTo(this->currentColor);
+        }
+
+        isON = !isON;
+    },true, "Blink"));
+
+}
+
+void LedStrip::switchToBreathe() {
+    isON = false;
+    changeCallListTo(LEDCommand([=](void) {
+        if (this->isChanging()) {
+            return;
+        }
+        
+        if (isON) {
+            this->smoothChangeTo(SimpleColor(), 1500);
+        } else {
+            this->smoothChangeTo(this->currentColor, 1500);
+        }
+        isON = !isON;
+    },true, "Breathe"));
 }
 
 void LedStrip::addToCallList(LEDCommand command) {

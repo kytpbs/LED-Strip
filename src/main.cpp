@@ -5,18 +5,22 @@
 #include "Constants.h"
 #include "thingProperties.h"
 #include "strip.h"
+#include "stripController.h"
 
 #include "commands.h"
 
 LedStrip strip(RED_PIN, GREEN_PIN, BLUE_PIN, WHITE_PIN);
+stripController::Status ledStatus = stripController::Status::UNKNOWN;
 CloudSerialSystem cloudCLI(&cloudSerial);
 
 bool connectedToCloud = false;
+bool syncedToCloud = false;
 
 /* START FUNCTION DEFINITIONS */
 
 void setup();
 void onCloudSync();
+void onCloudConnect();
 void onCloudDisconnect();
 void cloudSetup();
 
@@ -35,6 +39,7 @@ void setup() {
   // This delay gives the chance to wait for a Serial Monitor without blocking if none is found
   delay(1000);
 
+  strip.instantFillColor(SimpleColor(0, 0, 0, 0));
   // Setup Cloud
   cloudSetup();
   setupCommands(&cloudCLI);
@@ -42,13 +47,21 @@ void setup() {
 
 void onCloudSync() {
   Serial.println("Synced with IoT Cloud");
+  syncedToCloud = true;
+  ledStatus = stripController::Status::SYNCED;
+}
+
+void onCloudConnect() {
+  Serial.println("Connected to IoT Cloud");
   connectedToCloud = true;
+  ledStatus = stripController::Status::CONNECTED;
   setupOTA(&cloudCLI);
 }
 
 void onCloudDisconnect() {
   Serial.println("Disconnected from IoT Cloud");
-  connectedToCloud = false;
+  ledStatus = stripController::Status::DISCONNECTED;
+  syncedToCloud = false;
 }
 
 void cloudSetup() {
@@ -57,6 +70,7 @@ void cloudSetup() {
 
   // Connect to Arduino IoT Cloud
   ArduinoCloud.begin(ArduinoIoTPreferredConnection);
+  ArduinoCloud.addCallback(ArduinoIoTCloudEvent::CONNECT, onCloudConnect);
   ArduinoCloud.addCallback(ArduinoIoTCloudEvent::SYNC, onCloudSync);
   ArduinoCloud.addCallback(ArduinoIoTCloudEvent::DISCONNECT, onCloudDisconnect);
   /*
@@ -66,19 +80,21 @@ void cloudSetup() {
      The default is 0 (only errors).
      Maximum is 4
   */
-  setDebugMessageLevel(2);
+  setDebugMessageLevel(0);
   ArduinoCloud.printDebugInfo();
 }
 
 void loop() {
   syncStripToCloud();
   ArduinoCloud.update();
+  // First updateLEDStatus, as it will change the color of the strip or the mode
+  stripController::updateLEDStatus(&strip, ledStatus);
   strip.update();
-  if (connectedToCloud) { // only print the queue if we are connected to the cloud, else we will lose the print queue.
+  if (syncedToCloud) { // only print the queue if we are connected to the cloud, else we will lose the print queue.
     cloudCLI.handlePrintQueue(); // will print the queue if there is something to print, else will do nothing
-    // handle OTA updates, only if we are connected to the cloud and the led is not changing due to it taking to much of the loopTime
-    if (!strip.isChanging()) handleOTA(); 
   }
+  // handle OTA updates, only if we are connected to the wifi and the led is not changing due to it taking to much of the loopTime
+  if (connectedToCloud && !strip.isChanging()) handleOTA();
 }
 
 void syncStripToCloud() {
@@ -118,6 +134,9 @@ void printModeChange() {
       break;
     case Modes::Rainbow:
       Serial.println("Rainbow");
+      break;
+    case Modes::Blink:
+      Serial.println("Blink");
       break;
     case Modes::Off:
       Serial.println("Off");
