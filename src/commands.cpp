@@ -1,13 +1,29 @@
 #include "commands.h"
 
+void addCommand(Command function, String commandName);
+
 // in this define, we add it to the list of commands
+static std::map<String, Command> tempCommandsList;
 #define command(name) void name(CloudSerialSystem* cloudSerialSystem, std::vector<String>* argv)
 
-command(ping) {
+// do a dirty constructor getting auto called hack to run addCommand
+// this seems to be the only clean way, at least according to my research 
+#define createCommand(name) \
+command(name); \
+struct name##_registrar { \
+    name##_registrar() { \
+        addCommand(&name, #name); \
+    } \
+}; \
+static name##_registrar _registrar_##name; \
+command(name)
+
+
+createCommand(ping) {
     cloudSerialSystem->print("pong");
 }
 
-command(echo) {
+createCommand(echo) {
     if (argv->size() == 0) {
         cloudSerialSystem->print("No arguments provided!");
         return;
@@ -15,16 +31,16 @@ command(echo) {
     cloudSerialSystem->print(joinString(argv, " "));
 }
 
-command(reboot) {
+createCommand(reboot) {
     cloudSerialSystem->print("Rebooting...");
     ESP.restart();
 }
 
-command(getIP) {
+createCommand(getIP) {
     cloudSerialSystem->print(WiFi.localIP().toString());
 }
 
-command(setDebugMode) {
+createCommand(setDebugMode) {
     if (argv->size() == 0) {
         cloudSerialSystem->print("No arguments provided! Current debug mode: " + String(cloudSerialSystem->getDebug() ? "true" : "false"));
         return;
@@ -43,10 +59,14 @@ command(setDebugMode) {
     cloudSerialSystem->print("Invalid argument! Not changing debug mode. Current debug mode: " + String(cloudSerialSystem->getDebug() ? "true" : "false"));
 }
 
+void addCommand(Command function, String commandName) {
+    tempCommandsList[commandName] = function;
+}
 
 void setupCommands(CloudSerialSystem* cloudSerialSystem) {
-    cloudSerialSystem->addCommand("ping", ping);
-    cloudSerialSystem->addCommand("echo", echo);
-    cloudSerialSystem->addCommand("reboot", reboot);
-    cloudSerialSystem->addCommand("getIP", getIP);
+    for (auto const& command : tempCommandsList) {
+        cloudSerialSystem->addCommand(command.first, command.second);
+    }
+    // we clear the list because it will never be used again
+    tempCommandsList.clear();
 }

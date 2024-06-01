@@ -1,4 +1,7 @@
 #include <Arduino.h>
+/* import Arduino IoT Cloud library before any other library, 
+  ! cause or else it will not compile for some reason */
+#include <ArduinoIoTCloud.h>
 #include "CloudSerial.h" // private library, on lib/CloudSerial
 #include "OTA_System.h"
 #include "arduino_secrets.h"
