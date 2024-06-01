@@ -10,7 +10,7 @@
 #include "strip.h"
 #include "stripController.h"
 
-#include "commands.h"
+#include "commands/commands.h"
 
 LedStrip strip(RED_PIN, GREEN_PIN, BLUE_PIN, WHITE_PIN);
 stripController::Status ledStatus = stripController::Status::UNKNOWN;
@@ -45,7 +45,7 @@ void setup() {
   strip.instantFillColor(SimpleColor(0, 0, 0, 0));
   // Setup Cloud
   cloudSetup();
-  setupCommands(&cloudCLI);
+  setupCommands(&cloudCLI, &strip);
 }
 
 void onCloudSync() {
