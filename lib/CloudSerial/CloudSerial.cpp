@@ -14,7 +14,7 @@ void CloudSerialSystem::help(CloudSerialSystem* cloudSerialSystem, std::vector<S
     }
 }
 
-void CloudSerialSystem::addCommand(String commandName, void (*function)(CloudSerialSystem*, std::vector<String>*)) {
+void CloudSerialSystem::addCommand(String commandName, Command function) {
     this->commandsList[commandName] = function;
 }
 
