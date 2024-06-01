@@ -4,10 +4,6 @@
 
 #include "commands/commandHelper.h"
 
-
-// in this define, we add it to the list of commands
-static std::map<String, Command> tempCommandsList;
-
 createCommand(ping) {
     cloudSerialSystem->print("pong");
 }
@@ -46,19 +42,4 @@ createCommand(setDebugMode) {
         return;
     }
     cloudSerialSystem->print("Invalid argument! Not changing debug mode. Current debug mode: " + String(cloudSerialSystem->getDebug() ? "true" : "false"));
-}
-
-void addCommand(Command function, String commandName) {
-    tempCommandsList[commandName] = function;
-}
-
-
-namespace simpleCommands {
-    void setupCommands(CloudSerialSystem* cloudSerialSystem) {
-        for (auto const& command : tempCommandsList) {
-            cloudSerialSystem->addCommand(command.first, command.second);
-        }
-        // we clear the list because it will never be used again
-        tempCommandsList.clear();
-    }
 }
