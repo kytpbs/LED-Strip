@@ -1,7 +1,7 @@
 #include "commands/commandHelper.h"
 #include "commands/stripCommands.h"
 
-LedStrip* strip;
+LedStrip* m_strip;
 
 command(fillColor) {
     if (argv->size() < 4) {
@@ -14,7 +14,7 @@ command(fillColor) {
     int blue = argv->at(2).toInt();
     int white = argv->at(3).toInt();
 
-    strip->fillColor(SimpleColor(red, green, blue, white));
+    m_strip->fillColor(SimpleColor(red, green, blue, white));
 }
 
 command(setMode) {
@@ -49,12 +49,12 @@ command(setMode) {
         cloudSerialSystem->print("Invalid mode: " + mode);
         return;
     }
-    strip->changeModeTo(modeEnum);
+    m_strip->changeModeTo(modeEnum);
     cloudSerialSystem->print("Invalid mode: " + mode);
 }
 
 namespace stripCommands {
     void setupCommands(LedStrip* ledStrip) {
-        strip = ledStrip;
+        m_strip = ledStrip;
     }
 }
