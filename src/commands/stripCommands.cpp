@@ -49,7 +49,6 @@ command(setMode) {
         return;
     }
     m_strip->changeModeTo(modeEnum);
-    cloudSerialSystem->print("Invalid mode: " + mode);
 }
 
 namespace stripCommands {
