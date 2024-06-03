@@ -1,5 +1,7 @@
 #include "strip.h"
 
+#include "commands/commandHelper.h"
+
 namespace stripCommands {
-    void setupCommands(LedStrip* ledStrip);
+    void setupCommands(CloudSerialSystem* cloudSerialSystem, LedStrip* ledStrip);
 }

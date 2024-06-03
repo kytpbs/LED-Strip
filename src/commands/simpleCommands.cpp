@@ -1,14 +1,10 @@
-#include "CloudSerial.h" // private library, on lib/CloudSerial
-#include <WiFi.h>
-#include "stringTools.h" // private library, on lib/stringTools
+#include "commands/simpleCommands.h"
 
-#include "commands/commandHelper.h"
-
-createCommand(ping) {
+command(ping) {
     cloudSerialSystem->print("pong");
 }
 
-createCommand(echo) {
+command(echo) {
     if (argv->size() == 0) {
         cloudSerialSystem->print("No arguments provided!");
         return;
@@ -16,16 +12,16 @@ createCommand(echo) {
     cloudSerialSystem->print(joinString(argv, " "));
 }
 
-createCommand(reboot) {
+command(reboot) {
     cloudSerialSystem->print("Rebooting...");
     ESP.restart();
 }
 
-createCommand(getIP) {
+command(getIP) {
     cloudSerialSystem->print(WiFi.localIP().toString());
 }
 
-createCommand(setDebugMode) {
+command(setDebugMode) {
     if (argv->size() == 0) {
         cloudSerialSystem->print("No arguments provided! Current debug mode: " + String(cloudSerialSystem->getDebug() ? "true" : "false"));
         return;
@@ -42,4 +38,14 @@ createCommand(setDebugMode) {
         return;
     }
     cloudSerialSystem->print("Invalid argument! Not changing debug mode. Current debug mode: " + String(cloudSerialSystem->getDebug() ? "true" : "false"));
+}
+
+namespace simpleCommands {
+    void setupCommands(CloudSerialSystem* cloudSerialSystem) {
+        cloudSerialSystem->addCommand("ping", ping);
+        cloudSerialSystem->addCommand("echo", echo);
+        cloudSerialSystem->addCommand("reboot", reboot);
+        cloudSerialSystem->addCommand("getIP", getIP);
+        cloudSerialSystem->addCommand("setDebugMode", setDebugMode);
+    }
 }

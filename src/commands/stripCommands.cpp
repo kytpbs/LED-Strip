@@ -1,4 +1,3 @@
-#include "commands/commandHelper.h"
 #include "commands/stripCommands.h"
 
 LedStrip* m_strip;
@@ -54,7 +53,9 @@ command(setMode) {
 }
 
 namespace stripCommands {
-    void setupCommands(LedStrip* ledStrip) {
+    void setupCommands(CloudSerialSystem* cloudSerialSystem, LedStrip* ledStrip) {
         m_strip = ledStrip;
+        cloudSerialSystem->addCommand("fillColor", fillColor);
+        cloudSerialSystem->addCommand("setMode", setMode);
     }
 }

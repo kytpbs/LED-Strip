@@ -1,6 +1,7 @@
 #include "commands/commands.h"
 
 void setupCommands(CloudSerialSystem* cloudSerialSystem, LedStrip* strip) {
-    stripCommands::setupCommands(strip);
-    commandHelpers::addAllCommands(cloudSerialSystem); //! should be always at the end
+    Serial.println("Setting up commands, please wait...");
+    stripCommands::setupCommands(cloudSerialSystem, strip);
+    simpleCommands::setupCommands(cloudSerialSystem);
 }
