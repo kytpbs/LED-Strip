@@ -13,7 +13,10 @@ command(fillColor) {
     int blue = argv->at(2).toInt();
     int white = argv->at(3).toInt();
 
-    m_strip->fillColor(SimpleColor(red, green, blue, white));
+    SimpleColor color = SimpleColor(red, green, blue, white);
+    m_strip->fillColor(color);
+
+    cloudSerialSystem->print("Filled with color: " + color.toHexString());
 }
 
 command(setMode) {
