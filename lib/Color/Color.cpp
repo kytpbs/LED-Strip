@@ -33,3 +33,7 @@ int SimpleColor::getBrightness() {
     ColorUtils::getHSVfromRGB(this->red, this->green, this->blue, hue, sat, bri);
     return bri;
 }
+
+String SimpleColor::toHexString() {
+    return "#" + String(this->red, HEX) + String(this->green, HEX) + String(this->blue, HEX) + String(this->white, HEX);
+}

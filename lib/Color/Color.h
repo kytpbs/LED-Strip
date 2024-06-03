@@ -35,4 +35,9 @@ public:
     int getHue();
     int getSaturation();
     int getBrightness();
+
+    /**
+     * Returns the string in a hex format
+     */
+    String toHexString();
 };
