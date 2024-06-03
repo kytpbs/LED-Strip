@@ -16,7 +16,7 @@ command(fillColor) {
     SimpleColor color = SimpleColor(red, green, blue, white);
     m_strip->fillColor(color);
 
-    cloudSerialSystem->print("Filled with color: " + color.toHexString());
+    cloudSerialSystem->print("Filled with color: " + color.toHexRGB());
 }
 
 command(setMode) {

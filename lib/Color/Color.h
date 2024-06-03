@@ -39,5 +39,5 @@ public:
     /**
      * Returns the string in a hex format
      */
-    String toHexString();
+    String toHexRGB();
 };

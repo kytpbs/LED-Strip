@@ -34,6 +34,14 @@ int SimpleColor::getBrightness() {
     return bri;
 }
 
-String SimpleColor::toHexString() {
-    return "#" + String(this->red, HEX) + String(this->green, HEX) + String(this->blue, HEX) + String(this->white, HEX);
+String turnIntToHex(int value) {
+    String hex = String(value, HEX);
+    if (hex.length() == 1) {
+        hex = "0" + hex;
+    }
+    return hex;
+}
+
+String SimpleColor::toHexRGB() {
+    return "#" + turnIntToHex(this->red) + turnIntToHex(this->green) + turnIntToHex(this->blue);
 }
