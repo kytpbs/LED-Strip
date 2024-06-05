@@ -3,15 +3,20 @@
 LedStrip* m_strip;
 
 command(fillColor) {
-    if (argv->size() < 4) {
-        cloudSerialSystem->print("Usage: fillColor <red> <green> <blue> <white>");
+    if (argv->size() < 3) {
+        cloudSerialSystem->print("Usage: fillColor <red> <green> <blue> ?<white>");
         return;
     }
 
-    int red = argv->at(0).toInt();
-    int green = argv->at(1).toInt();
-    int blue = argv->at(2).toInt();
-    int white = argv->at(3).toInt();
+    uint8_t red = argv->at(0).toInt();
+    uint8_t green = argv->at(1).toInt();
+    uint8_t blue = argv->at(2).toInt();
+    uint8_t white = 0;
+
+    // if size is 4, then white is provided
+    if (argv->size() > 3) {
+        white = argv->at(3).toInt();
+    }
 
     SimpleColor color = SimpleColor(red, green, blue, white);
     m_strip->fillColor(color);
