@@ -44,6 +44,11 @@ void LedStrip::instantFillColor(SimpleColor color) {
 
 void LedStrip::changeModeTo(Modes mode) {
     currentMode = mode;
+    // if we are in night mode, then nightModeChange can't update this.
+    // meaning the user is changing the mode.
+    if (mode != Modes::Off && !this->isNightMode()) {
+        this->lastMode = mode;
+    }
     switch (mode) {
     case Modes::Normal:
         fillColor(this->currentColor);
