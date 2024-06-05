@@ -3,6 +3,8 @@
 #define STRINGTOOLS_H
 #include <Arduino.h>
 #include <vector>
+#include <string>
+#include "levenshtein-sse.hpp"
 
 
 /**
@@ -48,4 +50,7 @@ String joinString(std::vector<String>* argv, char separator);
 */
 String joinString(std::vector<String>* argv);
 
+std::string toStdString(String string);
+
+String fuzzyFind(std::vector<String> searchFrom, String toMatch);
 #endif

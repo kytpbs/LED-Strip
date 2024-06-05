@@ -55,4 +55,20 @@ String joinString(std::vector<String>* argv, char separator) {
 String joinString(std::vector<String>* argv) {
     return joinString(argv, " ");
 }
+
+std::string toStdString(String string) {
+    return std::string(string.c_str());
+}
+
+String fuzzyFind(std::vector<String> searchFrom, String toMatch) {
+    const int n = searchFrom.size();
+    std::vector<size_t> distances(n);
+
+    for (int i = 0; i < n; i++) {
+        distances[i] = levenshteinSSE::levenshtein(toStdString(toMatch), toStdString(searchFrom[i]));
+    }
+
+    auto it = std::min_element(distances.begin(), distances.end());
+    return searchFrom[std::distance(distances.begin(), it)];
+}
 #endif
