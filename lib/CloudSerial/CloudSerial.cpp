@@ -27,7 +27,7 @@ void CloudSerialSystem::print(String message) {
 void CloudSerialSystem::checkForCommands(String command) {
     int spaceIndex = command.indexOf(" ");
     bool hasArgs = spaceIndex != -1;
-    
+
     if (spaceIndex == -1) {
         spaceIndex = command.length();
     }
@@ -42,8 +42,13 @@ void CloudSerialSystem::checkForCommands(String command) {
         this->commandsList[commandName](this, &argv);
     }
     else {
+        std::vector<String> commandNames;
+        for (auto const& command : this->commandsList) {
+            commandNames.push_back(command.first);
+        }
         Serial.println(commandName + " named Command not found");
-        this->print("Command not found");
+        String result = fuzzyFind(commandNames, commandName);
+        this->print("Command not found, did you mean: \"" + result + "\"?");
     }
 }
 
