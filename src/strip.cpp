@@ -70,8 +70,10 @@ void LedStrip::setNightMode(bool active) {
         Serial.println("Changing mode to Night");
         this->lastMode = this->currentMode;
         changeModeTo(Modes::Off);
+        this->nightModeActive = true;
     } else {
         Serial.println("Closing night mode");
+        this->nightModeActive = false;
         changeModeTo(this->lastMode != Modes::Off ? this->lastMode : Modes::Normal); // if last mode was off, then set to normal
     }
 }
