@@ -17,7 +17,7 @@
 #include "stringTools.h"
 class CloudSerialSystem; // Forward declaration
 
-typedef std::function<void(CloudSerialSystem*, std::vector<String>*)> Command;
+typedef std::function<void(CloudSerialSystem*, std::vector<String>*)> CommandType;
 #define command(name) void name(CloudSerialSystem* cloudSerialSystem, std::vector<String>* argv)
 
 
@@ -25,7 +25,7 @@ class CloudSerialSystem {
     private:
         Preferences preferences;
         String* cloudString;
-        std::map<String, Command> commandsList;
+        std::map<String, CommandType> commandsList;
         std::queue<String> printBuffer;
         long lastPrint = 0;
         bool debug = true;
@@ -39,7 +39,7 @@ class CloudSerialSystem {
         static command(help);
     public:
     CloudSerialSystem(String* cloudSerialObject);
-    void addCommand(String commandName, Command function);
+    void addCommand(String commandName, CommandType function);
     void checkForCommands(String command);
     void checkForCommands() { this->checkForCommands(*this->cloudString); };
     void print(String message);
