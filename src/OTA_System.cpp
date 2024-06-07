@@ -9,25 +9,30 @@ CloudSerialSystem* cloudCommandLine;
 
 void setupOTA(CloudSerialSystem* cloudCLISystem) {
     cloudCommandLine = cloudCLISystem;
-    
+
     Serial.println("Setting up Server...");
     cloudCommandLine->debugPrint("Connected to WiFi: \"" + WiFi.SSID() + "\"");
     cloudCommandLine->print("CURRENT IP: " + WiFi.localIP().toString());
     Serial.println("CURRENT IP: " + WiFi.localIP().toString());
-    
+
     server.on("/", []() {
         server.sendHeader("Location", "/update");
         server.send(302);
     });
-    
-    Serial.println("Done setting up Server!");
-    
+
+    // ArduinoOTA.setPassword(PASSWORD);
     ElegantOTA.setAuth(USERNAME, PASSWORD);
 
     ElegantOTA.begin(&server);    // Start ElegantOTA
 
     server.begin();
     cloudCommandLine->debugPrint("OTA/HTTP server started");
+
+    ArduinoOTA.onStart(onOTAStart);
+    ArduinoOTA.onEnd([]() {onOTAEnd(true);});
+    ArduinoOTA.onError([](ota_error_t) {onOTAEnd(false);});
+    ArduinoOTA.begin();
+
     ElegantOTA.onStart(onOTAStart);
     ElegantOTA.onEnd(onOTAEnd);
 }
@@ -35,7 +40,7 @@ void setupOTA(CloudSerialSystem* cloudCLISystem) {
 void handleOTA() {
     server.handleClient();
     ElegantOTA.loop();
-    delay(50); // add a delay so that we don't get a WDT reset, was a pain to debug... DO NOT REMOVE!
+    ArduinoOTA.handle();
 }
 
 void onOTAStart() {

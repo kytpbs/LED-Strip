@@ -19,6 +19,8 @@
 #endif
 
 #include <ElegantOTA.h>
+#include <ArduinoOTA.h> // PlatformIO upload uses this library
+
 
 /**
  * @brief Setup the OTA update system
