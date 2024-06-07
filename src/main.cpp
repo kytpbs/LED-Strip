@@ -97,7 +97,7 @@ void loop() {
     cloudCLI.handlePrintQueue(); // will print the queue if there is something to print, else will do nothing
   }
   // handle OTA updates, only if we are connected to the wifi and the led is not changing due to it taking to much of the loopTime
-  if (connectedToCloud && !strip.isChanging()) handleOTA();
+  if (connectedToCloud) handleOTA();
 }
 
 void syncStripToCloud() {
