@@ -56,21 +56,42 @@ String joinString(std::vector<String>* argv) {
     return joinString(argv, " ");
 }
 
+size_t getDistanceBetweenStrings(String a, String b) {
+    size_t minSize = std::min(a.length(), b.length());
+    size_t maxSize = std::max(a.length(), b.length());
+
+    size_t distance = 0;
+    for (int i = 0; i < minSize; i++) {
+        if (a[i] != b[i]) {
+            distance++;
+        }
+    }
+    distance += maxSize - minSize;
+
+    return distance;
+}
+
+
 std::string toStdString(String string) {
     return std::string(string.c_str());
 }
 
 std::tuple<String, int> fuzzyFind(std::vector<String> searchFrom, String toMatch) {
     const int n = searchFrom.size();
-    std::vector<size_t> distances(n);
+    size_t distances[n];
+
+    size_t minDistanceIndex = 0;
 
     for (int i = 0; i < n; i++) {
-        distances[i] = levenshteinSSE::levenshtein(toStdString(toMatch), toStdString(searchFrom[i]));
+        auto distance = getDistanceBetweenStrings(toMatch, searchFrom[i]);
+        distances[i] = distance;
+        if (distance < distances[minDistanceIndex]) {
+            minDistanceIndex = i;
+        }
     }
 
-    auto it = std::min_element(distances.begin(), distances.end());
-    String resultString = searchFrom[std::distance(distances.begin(), it)];
-    std::tuple<String, int> result = std::make_tuple(resultString, *it);
+    String resultString = searchFrom[minDistanceIndex];
+    std::tuple<String, int> result = std::make_tuple(resultString, distances[minDistanceIndex]);
     return result;
 }
 #endif

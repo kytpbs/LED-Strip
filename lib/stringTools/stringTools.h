@@ -5,7 +5,6 @@
 #include <vector>
 #include <tuple>
 #include <string>
-#include "levenshtein-sse.hpp"
 
 
 /**
@@ -50,6 +49,8 @@ String joinString(std::vector<String>* argv, char separator);
  * @note Uses a space as the separator.
 */
 String joinString(std::vector<String>* argv);
+
+size_t getDistanceBetweenStrings(String a, String b);
 
 std::string toStdString(String string);
 
