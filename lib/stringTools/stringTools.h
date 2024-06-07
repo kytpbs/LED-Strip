@@ -3,6 +3,7 @@
 #define STRINGTOOLS_H
 #include <Arduino.h>
 #include <vector>
+#include <tuple>
 #include <string>
 #include "levenshtein-sse.hpp"
 
@@ -52,5 +53,5 @@ String joinString(std::vector<String>* argv);
 
 std::string toStdString(String string);
 
-String fuzzyFind(std::vector<String> searchFrom, String toMatch);
+std::tuple<String, int> fuzzyFind(std::vector<String> searchFrom, String toMatch);
 #endif

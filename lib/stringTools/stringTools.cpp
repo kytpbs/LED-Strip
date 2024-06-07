@@ -60,7 +60,7 @@ std::string toStdString(String string) {
     return std::string(string.c_str());
 }
 
-String fuzzyFind(std::vector<String> searchFrom, String toMatch) {
+std::tuple<String, int> fuzzyFind(std::vector<String> searchFrom, String toMatch) {
     const int n = searchFrom.size();
     std::vector<size_t> distances(n);
 
@@ -69,6 +69,8 @@ String fuzzyFind(std::vector<String> searchFrom, String toMatch) {
     }
 
     auto it = std::min_element(distances.begin(), distances.end());
-    return searchFrom[std::distance(distances.begin(), it)];
+    String resultString = searchFrom[std::distance(distances.begin(), it)];
+    std::tuple<String, int> result = std::make_tuple(resultString, *it);
+    return result;
 }
 #endif

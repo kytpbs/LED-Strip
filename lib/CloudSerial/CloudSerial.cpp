@@ -47,8 +47,17 @@ void CloudSerialSystem::checkForCommands(String command) {
             commandNames.push_back(command.first);
         }
         Serial.println(commandName + " named Command not found");
-        String result = fuzzyFind(commandNames, commandName);
-        this->print("Command not found, did you mean: \"" + result + "\"?");
+        auto result = fuzzyFind(commandNames, commandName);
+        String name = std::get<0>(result);
+        int distance = std::get<1>(result);
+        if (distance <= commandName.length() / 4) {
+            this->print("You misspelled '"+ name +"', running that instead.");
+            checkForCommands(name + command.substring(spaceIndex));
+        } else {
+            this->print(
+                "Command not found, did you mean: '" + 
+                name + "'? (" + String(distance) + " distance)");
+        }
     }
 }
 
