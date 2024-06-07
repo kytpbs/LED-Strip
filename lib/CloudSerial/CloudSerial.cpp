@@ -1,5 +1,5 @@
 #include "CloudSerial.h"
-#ifdef SERIALCOMMANDSSYSTEM_H // only include this file if serialCommandsSystem.h is included
+#ifdef CLOUD_CLI_H // only include this file if serialCommandsSystem.h is included
 
 bool firstRun = true;
 
