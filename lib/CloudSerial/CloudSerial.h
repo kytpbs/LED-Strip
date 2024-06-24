@@ -38,7 +38,9 @@ class CloudSerialSystem {
         */
         static command(help);
     public:
-    CloudSerialSystem(String* cloudSerialObject);
+    CloudSerialSystem() = default;
+    CloudSerialSystem(String* stringToModify);
+    void begin(String* stringToModify);
     void addCommand(String commandName, CommandType function);
     void checkForCommands(String command);
     void checkForCommands() { this->checkForCommands(*this->cloudString); };
@@ -51,4 +53,6 @@ class CloudSerialSystem {
     bool getDebug();
     void setDebug(bool debug);
 };
+
+extern CloudSerialSystem cloudCLI;
 #endif
