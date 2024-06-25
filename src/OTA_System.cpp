@@ -5,15 +5,12 @@
 #else // We are on an ESP32
     WebServer server(80);
 #endif
-CloudSerialSystem* cloudCommandLine;
 
-void setupOTA(CloudSerialSystem* cloudCLISystem) {
-    cloudCommandLine = cloudCLISystem;
+void setupOTA() {
 
-    Serial.println("Setting up Server...");
-    cloudCommandLine->debugPrint("Connected to WiFi: \"" + WiFi.SSID() + "\"");
-    cloudCommandLine->print("CURRENT IP: " + WiFi.localIP().toString());
-    Serial.println("CURRENT IP: " + WiFi.localIP().toString());
+    cloudCLI.debugPrint("Setting up Server...");
+    cloudCLI.debugPrint("Connected to WiFi: \"" + WiFi.SSID() + "\"");
+    cloudCLI.print("CURRENT IP: " + WiFi.localIP().toString());
 
     server.on("/", []() {
         server.sendHeader("Location", "/update");
@@ -26,7 +23,7 @@ void setupOTA(CloudSerialSystem* cloudCLISystem) {
     ElegantOTA.begin(&server);    // Start ElegantOTA
 
     server.begin();
-    cloudCommandLine->debugPrint("OTA/HTTP server started");
+    cloudCLI.debugPrint("OTA/HTTP server started");
 
     ArduinoOTA.onStart(onOTAStart);
     ArduinoOTA.onEnd([]() {onOTAEnd(true);});
@@ -44,15 +41,15 @@ void handleOTA() {
 }
 
 void onOTAStart() {
-    cloudCommandLine->print("OTA UPLOAD STARTED");
+    cloudCLI.print("OTA UPLOAD STARTED");
 }
 
 void onOTAEnd(bool success) {
     if (success) {
-        cloudCommandLine->print("OTA UPLOAD COMPLETE! REBOOTING...");
+        cloudCLI.print("OTA UPLOAD COMPLETE! REBOOTING...");
     }
     else {
-        cloudCommandLine->print("OTA Failed PLEASE TRY AGAIN");
+        cloudCLI.print("OTA Failed PLEASE TRY AGAIN");
     }
 }
 

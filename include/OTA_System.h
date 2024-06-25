@@ -26,7 +26,7 @@
  * @brief Setup the OTA update system
  * @param cloudCLI The cloudCLI object that will be used to print to the cloud
 */
-void setupOTA(CloudSerialSystem* cloudCLI); // request the cloudCLI object so we can print to it
+void setupOTA(); // request the cloudCLI object so we can print to it
 
 /**
  * @brief Handle the OTA update system. This should be called in the cloud loop.

@@ -57,7 +57,7 @@ void onCloudConnect() {
   Serial.println("Connected to IoT Cloud");
   connectedToCloud = true;
   ledStatus = stripController::Status::CONNECTED;
-  setupOTA(&cloudCLI);
+  setupOTA();
 }
 
 void onCloudDisconnect() {
