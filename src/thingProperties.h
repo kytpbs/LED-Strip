@@ -5,6 +5,11 @@
 
 const char DEVICE_LOGIN_NAME[]  = "b392827b-b7c3-47bc-9d9c-40ab75b6fb9b";
 
+#ifdef SIMULATION
+#define SECRET_SSID "Wokwi-GUEST"
+#define SECRET_OPTIONAL_PASS ""
+#endif
+
 const char SSID[]               = SECRET_SSID;    // Network SSID (name)
 const char PASS[]               = SECRET_OPTIONAL_PASS;    // Network password (use for WPA, or use as key for WEP)
 const char DEVICE_KEY[]  = SECRET_DEVICE_KEY;    // Secret device password
