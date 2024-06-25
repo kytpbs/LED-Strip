@@ -14,7 +14,6 @@
 
 LedStrip strip(RED_PIN, GREEN_PIN, BLUE_PIN, WHITE_PIN);
 stripController::Status ledStatus = stripController::Status::UNKNOWN;
-CloudSerialSystem cloudCLI(&cloudSerial);
 
 bool connectedToCloud = false;
 bool syncedToCloud = false;
@@ -58,7 +57,7 @@ void onCloudConnect() {
   Serial.println("Connected to IoT Cloud");
   connectedToCloud = true;
   ledStatus = stripController::Status::CONNECTED;
-  setupOTA(&cloudCLI);
+  setupOTA();
 }
 
 void onCloudDisconnect() {
@@ -70,6 +69,7 @@ void onCloudDisconnect() {
 void cloudSetup() {
   // Defined in thingProperties.h
   initProperties();
+  cloudCLI.begin(&cloudSerial);
 
   // Connect to Arduino IoT Cloud
   ArduinoCloud.begin(ArduinoIoTPreferredConnection);

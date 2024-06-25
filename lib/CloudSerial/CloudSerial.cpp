@@ -3,8 +3,12 @@
 
 bool firstRun = true;
 
-CloudSerialSystem::CloudSerialSystem(String* cloudSerialObject) {
-    this->cloudString = cloudSerialObject;
+CloudSerialSystem::CloudSerialSystem(String* stringToModify) {
+    this->begin(stringToModify);
+}
+
+void CloudSerialSystem::begin(String* stringToModify) {
+    this->cloudString = stringToModify;
     this->addCommand("help", help);
 }
 
@@ -83,6 +87,7 @@ bool CloudSerialSystem::getDebug() {
         this->preferences.begin("cloudSerial", true);
         this->debug = this->preferences.getBool("debug", true);
         this->preferences.end();
+        firstRun = false;
     }
     return this->debug;
 } 
@@ -98,4 +103,5 @@ void CloudSerialSystem::handlePrintQueue() {
     }
 }
 
+CloudSerialSystem cloudCLI;
 #endif
