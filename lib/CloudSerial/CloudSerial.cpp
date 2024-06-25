@@ -54,9 +54,12 @@ void CloudSerialSystem::checkForCommands(String command) {
             this->print("You misspelled '"+ name +"', running that instead.");
             checkForCommands(name + command.substring(spaceIndex));
         } else {
-            this->print(
-                "Command not found, did you mean: '" + 
-                name + "'? (" + String(distance) + " distance)");
+            String response = "Command not found";
+            if (distance >= commandName.length() - 1) {
+                response +=  " did you mean: " + name + "?"
+                + " (" + String(distance) + " distance)";
+            }
+            this->print(response);
         }
     }
 }
