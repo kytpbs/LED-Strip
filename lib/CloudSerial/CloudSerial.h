@@ -24,7 +24,7 @@ typedef std::function<void(CloudSerialSystem*, std::vector<String>*)> CommandTyp
 class CloudSerialSystem {
     private:
         Preferences preferences;
-        String* cloudString;
+        String* cloudString{};
         std::map<String, CommandType> commandsList;
         std::queue<String> printBuffer;
         long lastPrint = 0;
@@ -39,7 +39,7 @@ class CloudSerialSystem {
         static command(help);
     public:
     CloudSerialSystem() = default;
-    CloudSerialSystem(String* stringToModify);
+    explicit CloudSerialSystem(String* stringToModify);
     void begin(String* stringToModify);
     void addCommand(String commandName, CommandType function);
     void checkForCommands(String command);
