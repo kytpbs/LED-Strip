@@ -15,12 +15,12 @@ enum Modes {
 
 class LedStrip {
     private:
-        Modes currentMode;
-        Modes lastMode; // used for night mode
-        bool nightModeActive;
-        bool isON; // used by blink and breathe
-        unsigned long lastBlinkTime; // only used by blink
-        uint16_t rainbowHue; // can't do uint8_t because it will overflow
+        Modes currentMode = Modes::Off;
+        Modes lastMode = Modes::Off; // used for night mode
+        bool nightModeActive = false;
+        bool isON = true; // used by blink and breathe
+        unsigned long lastBlinkTime = 0; // only used by blink
+        uint16_t rainbowHue = 0; // can't do uint8_t because it will overflow
         SimpleColor currentColor;
 
         SmoothPin redPin;
