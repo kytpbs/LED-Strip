@@ -1,4 +1,6 @@
 #include "stringTools.h"
+
+#include <utility>
 #ifndef STRINGTOOLS_H // STD does not exist on Arduino
 // we don't need to implement this for Arduino, because std is not available on Arduino.
 #else // STD does not exist on Arduino
@@ -32,7 +34,7 @@ void splitString(String string, std::vector<String>* argv) {
 
 std::vector<String> splitStringtoVec(String string) {
     std::vector<String> argv = std::vector<String>();
-    splitString(string, &argv);
+    splitString(std::move(string), &argv);
     return argv;
 }
 
@@ -72,12 +74,12 @@ size_t getDistanceBetweenStrings(String a, String b) {
 }
 
 
-std::string toStdString(String string) {
+std::string toStdString(const String& string) {
     return std::string(string.c_str());
 }
 
 std::tuple<String, int> fuzzyFind(std::vector<String> searchFrom, String toMatch) {
-    const int n = searchFrom.size();
+    const size_t n = searchFrom.size();
     size_t distances[n];
 
     size_t minDistanceIndex = 0;

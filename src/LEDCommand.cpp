@@ -1,14 +1,16 @@
+#include <utility>
+
 #include "ledCommand.h"
 
 LEDCommand::LEDCommand(Runnable taskToRun, bool isMultiRun, String commandName) {
-    this->taskToRun = taskToRun;
+    this->taskToRun = std::move(taskToRun);
     this->isMultiRun = isMultiRun;
-    this->commandName = commandName;
+    this->commandName = std::move(commandName);
 }
 
 LEDCommand::LEDCommand(Runnable toRun, int runTimes, String name) {
-    this->taskToRun = toRun;
-    this->commandName = name;
+    this->taskToRun = std::move(toRun);
+    this->commandName = std::move(name);
     this->runTimes = runTimes;
 
     this->isMultiRun = true;
