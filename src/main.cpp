@@ -20,13 +20,11 @@ bool syncedToCloud = false;
 
 /* START FUNCTION DEFINITIONS */
 
-void setup();
 void onCloudSync();
 void onCloudConnect();
 void onCloudDisconnect();
 void cloudSetup();
 
-void loop();
 void syncStripToCloud();
 void printColorChange();
 void printModeChange();

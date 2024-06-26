@@ -5,10 +5,9 @@ SimpleColor::SimpleColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t white
     this->green = green;
     this->blue = blue;
     this->white = white;
-};
+}
 
 SimpleColor::SimpleColor(float hue, float sat, float bri) {
-    
     ColorUtils::getRGBfromHSV(hue, sat, bri, this->red, this->green, this->blue);
 
     // calculate white using RBG, Saturation and Brightness.

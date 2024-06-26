@@ -12,7 +12,7 @@ void setupOTA() {
     cloudCLI.debugPrint("Connected to WiFi: \"" + WiFi.SSID() + "\"");
     cloudCLI.print("CURRENT IP: " + WiFi.localIP().toString());
 
-    server.on("/", []() {
+    server.on("/", [] {
         server.sendHeader("Location", "/update");
         server.send(302);
     });
@@ -26,7 +26,7 @@ void setupOTA() {
     cloudCLI.debugPrint("OTA/HTTP server started");
 
     ArduinoOTA.onStart(onOTAStart);
-    ArduinoOTA.onEnd([]() {onOTAEnd(true);});
+    ArduinoOTA.onEnd([] {onOTAEnd(true);});
     ArduinoOTA.onError([](ota_error_t) {onOTAEnd(false);});
     ArduinoOTA.begin();
 
