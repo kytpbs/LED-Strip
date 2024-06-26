@@ -113,7 +113,7 @@ void LedStrip::instantChangeTo(SimpleColor color) {
 }
 
 void LedStrip::switchToRainbow() {
-    changeCallListTo(LEDCommand([=](void) {
+    changeCallListTo(LEDCommand([=]() {
         if (this->isChanging()) {
             return;
         }
@@ -126,7 +126,7 @@ void LedStrip::switchToRainbow() {
 
 void LedStrip::switchToBlink() {
     isON = false;
-    changeCallListTo(LEDCommand([=](void) {
+    changeCallListTo(LEDCommand([=]() {
         if (millis() - lastBlinkTime < 250) {
             return;
         }
@@ -146,7 +146,7 @@ void LedStrip::switchToBlink() {
 
 void LedStrip::switchToBreathe() {
     isON = false;
-    changeCallListTo(LEDCommand([=](void) {
+    changeCallListTo(LEDCommand([=]() {
         if (this->isChanging()) {
             return;
         }
