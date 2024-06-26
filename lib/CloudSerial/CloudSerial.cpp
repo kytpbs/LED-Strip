@@ -47,8 +47,8 @@ void CloudSerialSystem::checkForCommands(String command) {
     }
     else {
         std::vector<String> commandNames;
-        for (auto const& command : this->commandsList) {
-            commandNames.push_back(command.first);
+        for (auto const& cmd : this->commandsList) {
+            commandNames.push_back(cmd.first);
         }
         Serial.println(commandName + " named Command not found");
         auto result = fuzzyFind(commandNames, commandName);
