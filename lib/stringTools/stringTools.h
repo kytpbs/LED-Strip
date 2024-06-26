@@ -52,7 +52,7 @@ String joinString(std::vector<String>* argv);
 
 size_t getDistanceBetweenStrings(String a, String b);
 
-std::string toStdString(String string);
+std::string toStdString(const String& string);
 
 std::tuple<String, int> fuzzyFind(std::vector<String> searchFrom, String toMatch);
 #endif
