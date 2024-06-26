@@ -5,7 +5,7 @@ command(ping) {
 }
 
 command(echo) {
-    if (argv->size() == 0) {
+    if (argv->empty()) {
         cloudSerialSystem->print("No arguments provided!");
         return;
     }
@@ -22,7 +22,7 @@ command(getIP) {
 }
 
 command(setDebugMode) {
-    if (argv->size() == 0) {
+    if (argv->empty()) {
         cloudSerialSystem->print("No arguments provided! Current debug mode: " + String(cloudSerialSystem->getDebug() ? "true" : "false"));
         return;
     }

@@ -93,7 +93,7 @@ bool CloudSerialSystem::getDebug() {
 } 
 
 void CloudSerialSystem::handlePrintQueue() {
-    if (this->printBuffer.size() > 0 && millis() - this->lastPrint > delayBetweenPrints) {
+    if (!this->printBuffer.empty() && millis() - this->lastPrint > delayBetweenPrints) {
         String message = this->printBuffer.front();
         Serial.println("Printing message: \"" + message + "\" to cloudSerial");
         this->printBuffer.pop();

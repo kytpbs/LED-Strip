@@ -13,7 +13,7 @@ SimpleColor::SimpleColor(float hue, float sat, float bri) {
     // calculate white using RBG, Saturation and Brightness.
     // Use the opposite of saturation, as 0 is white and 100 is color.
     this->white = ((100 - sat) / 100.0) * ((bri) / 100.0) * 255;
-};
+}
 
 int SimpleColor::getHue() {
     float hue, sat, bri;

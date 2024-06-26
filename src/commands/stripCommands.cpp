@@ -25,7 +25,7 @@ command(fillColor) {
 }
 
 command(setMode) {
-    if (argv->size() == 0) {
+    if (argv->empty()) {
         cloudSerialSystem->print("Usage: setMode <mode>");
         return;
     }
