@@ -117,7 +117,7 @@ void LedStrip::switchToRainbow() {
         if (this->isChanging()) {
             return;
         }
-        SimpleColor color = SimpleColor(this->rainbowHue, 100, 100);
+        const SimpleColor color = SimpleColor(this->rainbowHue, 100, 100);
         this->smoothChangeTo(color, 125);
         this->rainbowHue += 1;
         this->rainbowHue %= 360;
@@ -160,11 +160,11 @@ void LedStrip::switchToBreathe() {
     },true, "Breathe"));
 }
 
-void LedStrip::addToCallList(LEDCommand command) {
+void LedStrip::addToCallList(const LEDCommand& command) {
     this->callList.push_back(command);
 }
 
-void LedStrip::changeCallListTo(LEDCommand command) {
+void LedStrip::changeCallListTo(const LEDCommand& command) {
     this->callList.clear();
     this->callList.push_back(command);
 }

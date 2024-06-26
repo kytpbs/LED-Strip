@@ -8,9 +8,9 @@ command(fillColor) {
         return;
     }
 
-    uint8_t red = argv->at(0).toInt();
-    uint8_t green = argv->at(1).toInt();
-    uint8_t blue = argv->at(2).toInt();
+    const uint8_t red = argv->at(0).toInt();
+    const uint8_t green = argv->at(1).toInt();
+    const uint8_t blue = argv->at(2).toInt();
     uint8_t white = 0;
 
     // if size is 4, then white is provided
@@ -18,7 +18,7 @@ command(fillColor) {
         white = argv->at(3).toInt();
     }
 
-    SimpleColor color = SimpleColor(red, green, blue, white);
+    const SimpleColor color = SimpleColor(red, green, blue, white);
     m_strip->fillColor(color);
 
     cloudSerialSystem->print("Filled with color: " + color.toHexRGB());
@@ -30,7 +30,7 @@ command(setMode) {
         return;
     }
 
-    String mode = argv->at(0);
+    const String mode = argv->at(0);
     Modes modeEnum;
     if (mode == "normal") {
         modeEnum = Modes::Normal;

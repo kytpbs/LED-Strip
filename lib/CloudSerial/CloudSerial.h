@@ -41,11 +41,11 @@ class CloudSerialSystem {
     CloudSerialSystem() = default;
     explicit CloudSerialSystem(String* stringToModify);
     void begin(String* stringToModify);
-    void addCommand(String commandName, CommandType function);
-    void checkForCommands(String command);
+    void addCommand(const String& commandName, CommandType function);
+    void checkForCommands(const String& command);
     void checkForCommands() { this->checkForCommands(*this->cloudString); };
-    void print(String message);
-    void debugPrint(String message);
+    void print(const String& message);
+    void debugPrint(const String& message);
     /**
      * @brief Handle the print queue. This should be called in the cloud loop.
     */

@@ -32,12 +32,12 @@ public:
     */
     SimpleColor(float hue, float sat, float bri);
 
-    int getHue();
-    int getSaturation();
-    int getBrightness();
+    int getHue() const;
+    int getSaturation() const;
+    int getBrightness() const;
 
     /**
      * Returns the string in a hex format
      */
-    String toHexRGB();
+    String toHexRGB() const;
 };

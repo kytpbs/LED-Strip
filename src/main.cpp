@@ -170,7 +170,7 @@ void onModeChange()  {
   executed every time a new value is received from IoT Cloud.
 */
 void onNightModeChange()  {
-  String nightModeStatus = nightMode.isActive() ? "Active" : "Inactive";
+  const String nightModeStatus = nightMode.isActive() ? "Active" : "Inactive";
   Serial.print("Night Mode is ");
   Serial.println(nightModeStatus);
   cloudCLI.debugPrint("Night Mode updated to: " + nightModeStatus);

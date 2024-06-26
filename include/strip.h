@@ -39,8 +39,8 @@ class LedStrip {
         void switchToBlink();
         void switchToBreathe();
 
-        void addToCallList(LEDCommand command);
-        void changeCallListTo(LEDCommand command);
+        void addToCallList(const LEDCommand& command);
+        void changeCallListTo(const LEDCommand& command);
     public:
         LedStrip() = default;
         LedStrip(uint8_t redPin, uint8_t greenPin, uint8_t bluePin, uint8_t whitePin);
@@ -81,7 +81,7 @@ class LedStrip {
 
         SimpleColor getCurrentColor();
         bool isChanging();
-        bool isNightMode() {
+        bool isNightMode() const {
             return nightModeActive;
         }
         void getRGB(uint8_t &r, uint8_t &g, uint8_t &b);

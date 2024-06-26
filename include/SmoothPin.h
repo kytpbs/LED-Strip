@@ -41,7 +41,7 @@ class SmoothPin {
          * @note this value is updated with every call to update()
          * so it can be used to sync with other variables.
         */
-        int getCurrentValue() { return this->currentValue; }
-        int getTargetValue() { return this->targetValue; }
-        bool isChanging() { return this->currentValue != this->targetValue; };
+        int getCurrentValue() const { return this->currentValue; }
+        int getTargetValue() const { return this->targetValue; }
+        bool isChanging() const { return this->currentValue != this->targetValue; };
 };

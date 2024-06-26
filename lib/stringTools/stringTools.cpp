@@ -6,7 +6,7 @@
 #else // STD does not exist on Arduino
 
 
-void splitString(String string, std::vector<String>* argv) {
+void splitString(const String& string, std::vector<String>* argv) {
     int spaceIndex = string.indexOf(" ");
     
     if (spaceIndex == -1) {
@@ -32,13 +32,13 @@ void splitString(String string, std::vector<String>* argv) {
     argv->push_back(args);
 }
 
-std::vector<String> splitStringtoVec(String string) {
+std::vector<String> splitStringtoVec(const String& string) {
     std::vector<String> argv = std::vector<String>();
-    splitString(std::move(string), &argv);
+    splitString(string, &argv);
     return argv;
 }
 
-String joinString(std::vector<String>* argv, String separator) {
+String joinString(std::vector<String>* argv, const String& separator) {
     // return String("Not implemented yet!");
     String string = "";
     for (int i = 0; i < argv->size(); i++) {
@@ -59,8 +59,8 @@ String joinString(std::vector<String>* argv) {
 }
 
 size_t getDistanceBetweenStrings(String a, String b) {
-    size_t minSize = std::min(a.length(), b.length());
-    size_t maxSize = std::max(a.length(), b.length());
+    size_t const minSize = std::min(a.length(), b.length());
+    size_t const maxSize = std::max(a.length(), b.length());
 
     size_t distance = 0;
     for (int i = 0; i < minSize; i++) {
@@ -78,14 +78,14 @@ std::string toStdString(const String& string) {
     return std::string(string.c_str());
 }
 
-std::tuple<String, int> fuzzyFind(std::vector<String> searchFrom, String toMatch) {
+std::tuple<String, int> fuzzyFind(std::vector<String> searchFrom, const String& toMatch) {
     const size_t n = searchFrom.size();
     size_t distances[n];
 
     size_t minDistanceIndex = 0;
 
     for (int i = 0; i < n; i++) {
-        auto distance = getDistanceBetweenStrings(toMatch, searchFrom[i]);
+        auto const distance = getDistanceBetweenStrings(toMatch, searchFrom[i]);
         distances[i] = distance;
         if (distance < distances[minDistanceIndex]) {
             minDistanceIndex = i;
