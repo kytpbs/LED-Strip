@@ -128,7 +128,7 @@ void printModeChange() {
   Serial.print((Modes)mode);
   Serial.print(" -> ");
   
-  switch ((Modes)mode) {
+  switch (static_cast<Modes>(mode)) {
     case Modes::Normal:
       Serial.println("Normal");
       break;
@@ -163,7 +163,7 @@ void onColorChange() {
 void onModeChange()  {
   printModeChange();
   // do not call onColorChange when mode is normal, as it will be called by the strip.changeModeTo() function
-  strip.changeModeTo(Modes(mode));
+  strip.changeModeTo(static_cast<Modes>(mode));
 }
 
 
