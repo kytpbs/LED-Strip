@@ -123,7 +123,7 @@ void printColorChange() {
 
 void printModeChange() {
   Serial.print("Mode Changed: ");
-  Serial.print((Modes)mode);
+  Serial.print(mode);
   Serial.print(" -> ");
   
   switch (static_cast<Modes>(mode)) {

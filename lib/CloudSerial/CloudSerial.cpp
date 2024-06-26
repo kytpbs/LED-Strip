@@ -29,7 +29,7 @@ void CloudSerialSystem::print(String message) {
 }
 
 void CloudSerialSystem::checkForCommands(String command) {
-    int spaceIndex = command.indexOf(" ");
+    unsigned int spaceIndex = command.indexOf(" ");
     bool hasArgs = spaceIndex != -1;
 
     if (spaceIndex == -1) {

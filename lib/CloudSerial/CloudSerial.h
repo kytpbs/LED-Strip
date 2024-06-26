@@ -27,7 +27,7 @@ class CloudSerialSystem {
         String* cloudString{};
         std::map<String, CommandType> commandsList;
         std::queue<String> printBuffer;
-        long lastPrint = 0;
+        unsigned long lastPrint = 0;
         bool debug = true;
         /**
          * @brief Print the help message for the commands, listing all the commands
