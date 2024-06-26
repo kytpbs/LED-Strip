@@ -4,14 +4,14 @@
 
 class SmoothPin {
     private:
-        uint8_t pin;
-        int currentValue;
-        int targetValue;
-        unsigned long lastChangeTime;
-        unsigned long delayBetweenTime;
+        uint8_t pin = -1; // this is so, if for some reason the pin is not set, it will not write to random pins
+        int currentValue = 0;
+        int targetValue = 0;
+        unsigned long lastChangeTime = 0;
+        unsigned long delayBetweenTime = 0;
     public:
         SmoothPin() = default;
-        SmoothPin(uint8_t pin);
+        explicit SmoothPin(uint8_t pin);
         /**
          * @brief Write value to pin.
          * gradually changes to value every time update() is called without delay.
@@ -41,7 +41,7 @@ class SmoothPin {
          * @note this value is updated with every call to update()
          * so it can be used to sync with other variables.
         */
-        int getCurrentValue() { return this->currentValue; }
-        int getTargetValue() { return this->targetValue; }
-        bool isChanging() { return this->currentValue != this->targetValue; };
+        int getCurrentValue() const { return this->currentValue; }
+        int getTargetValue() const { return this->targetValue; }
+        bool isChanging() const { return this->currentValue != this->targetValue; };
 };

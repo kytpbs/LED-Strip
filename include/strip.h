@@ -15,12 +15,12 @@ enum Modes {
 
 class LedStrip {
     private:
-        Modes currentMode;
-        Modes lastMode; // used for night mode
-        bool nightModeActive;
-        bool isON; // used by blink and breathe
-        unsigned long lastBlinkTime; // only used by blink
-        uint16_t rainbowHue; // can't do uint8_t because it will overflow
+        Modes currentMode = Modes::Off;
+        Modes lastMode = Modes::Off; // used for night mode
+        bool nightModeActive = false;
+        bool isON = true; // used by blink and breathe
+        unsigned long lastBlinkTime = 0; // only used by blink
+        uint16_t rainbowHue = 0; // can't do uint8_t because it will overflow
         SimpleColor currentColor;
 
         SmoothPin redPin;
@@ -39,8 +39,8 @@ class LedStrip {
         void switchToBlink();
         void switchToBreathe();
 
-        void addToCallList(LEDCommand command);
-        void changeCallListTo(LEDCommand command);
+        void addToCallList(const LEDCommand& command);
+        void changeCallListTo(const LEDCommand& command);
     public:
         LedStrip() = default;
         LedStrip(uint8_t redPin, uint8_t greenPin, uint8_t bluePin, uint8_t whitePin);
@@ -81,7 +81,7 @@ class LedStrip {
 
         SimpleColor getCurrentColor();
         bool isChanging();
-        bool isNightMode() {
+        bool isNightMode() const {
             return nightModeActive;
         }
         void getRGB(uint8_t &r, uint8_t &g, uint8_t &b);

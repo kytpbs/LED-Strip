@@ -20,13 +20,11 @@ bool syncedToCloud = false;
 
 /* START FUNCTION DEFINITIONS */
 
-void setup();
 void onCloudSync();
 void onCloudConnect();
 void onCloudDisconnect();
 void cloudSetup();
 
-void loop();
 void syncStripToCloud();
 void printColorChange();
 void printModeChange();
@@ -125,10 +123,10 @@ void printColorChange() {
 
 void printModeChange() {
   Serial.print("Mode Changed: ");
-  Serial.print((Modes)mode);
+  Serial.print(mode);
   Serial.print(" -> ");
   
-  switch ((Modes)mode) {
+  switch (static_cast<Modes>(mode)) {
     case Modes::Normal:
       Serial.println("Normal");
       break;
@@ -163,7 +161,7 @@ void onColorChange() {
 void onModeChange()  {
   printModeChange();
   // do not call onColorChange when mode is normal, as it will be called by the strip.changeModeTo() function
-  strip.changeModeTo(Modes(mode));
+  strip.changeModeTo(static_cast<Modes>(mode));
 }
 
 
@@ -172,7 +170,7 @@ void onModeChange()  {
   executed every time a new value is received from IoT Cloud.
 */
 void onNightModeChange()  {
-  String nightModeStatus = nightMode.isActive() ? "Active" : "Inactive";
+  const String nightModeStatus = nightMode.isActive() ? "Active" : "Inactive";
   Serial.print("Night Mode is ");
   Serial.println(nightModeStatus);
   cloudCLI.debugPrint("Night Mode updated to: " + nightModeStatus);

@@ -18,7 +18,7 @@ void SmoothPin::instantWrite(int value) {
 void SmoothPin::write(int value, unsigned int totalDelayMillis) {
     this->targetValue = value;
     this->lastChangeTime = 0;
-    unsigned int diff = abs(value - this->currentValue);
+    unsigned const int diff = abs(value - this->currentValue);
     if (diff == 0) {
         return;
     }
@@ -34,7 +34,7 @@ void SmoothPin::update() {
         return;
     }
 
-    unsigned long currentTime = millis();
+    unsigned const long currentTime = millis();
     if (currentTime - this->lastChangeTime > this->delayBetweenTime) {
         if (this->currentValue < this->targetValue) {
             this->currentValue++;

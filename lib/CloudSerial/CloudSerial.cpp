@@ -1,4 +1,6 @@
 #include "CloudSerial.h"
+
+#include <utility>
 #ifdef CLOUD_CLI_H // only include this file if serialCommandsSystem.h is included
 
 bool firstRun = true;
@@ -20,17 +22,17 @@ void CloudSerialSystem::help(CloudSerialSystem* cloudSerialSystem, std::vector<S
     }
 }
 
-void CloudSerialSystem::addCommand(String commandName, CommandType function) {
-    this->commandsList[commandName] = function;
+void CloudSerialSystem::addCommand(const String& commandName, CommandType function) {
+    this->commandsList[commandName] = std::move(function);
 }
 
-void CloudSerialSystem::print(String message) {
+void CloudSerialSystem::print(const String& message) {
     this->printBuffer.push(message);
 }
 
-void CloudSerialSystem::checkForCommands(String command) {
-    int spaceIndex = command.indexOf(" ");
-    bool hasArgs = spaceIndex != -1;
+void CloudSerialSystem::checkForCommands(const String& command) {
+    unsigned int spaceIndex = command.indexOf(" ");
+    const bool hasArgs = spaceIndex != -1;
 
     if (spaceIndex == -1) {
         spaceIndex = command.length();
@@ -47,13 +49,13 @@ void CloudSerialSystem::checkForCommands(String command) {
     }
     else {
         std::vector<String> commandNames;
-        for (auto const& command : this->commandsList) {
-            commandNames.push_back(command.first);
+        for (auto const& cmd : this->commandsList) {
+            commandNames.push_back(cmd.first);
         }
         Serial.println(commandName + " named Command not found");
-        auto result = fuzzyFind(commandNames, commandName);
-        String name = std::get<0>(result);
-        int distance = std::get<1>(result);
+        const auto result = fuzzyFind(commandNames, commandName);
+        const String name = std::get<0>(result);
+        const int distance = std::get<1>(result);
         if (distance <= commandName.length() / 4) {
             this->print("You misspelled '"+ name +"', running that instead.");
             checkForCommands(name + command.substring(spaceIndex));
@@ -68,7 +70,7 @@ void CloudSerialSystem::checkForCommands(String command) {
     }
 }
 
-void CloudSerialSystem::debugPrint(String message) {
+void CloudSerialSystem::debugPrint(const String& message) {
     if (this->getDebug()) {
         this->print("DEBUG - " + message); // only print to cloudSerial if debug is enabled
     }
@@ -93,8 +95,8 @@ bool CloudSerialSystem::getDebug() {
 } 
 
 void CloudSerialSystem::handlePrintQueue() {
-    if (this->printBuffer.size() > 0 && millis() - this->lastPrint > delayBetweenPrints) {
-        String message = this->printBuffer.front();
+    if (!this->printBuffer.empty() && millis() - this->lastPrint > delayBetweenPrints) {
+        const String message = this->printBuffer.front();
         Serial.println("Printing message: \"" + message + "\" to cloudSerial");
         this->printBuffer.pop();
         this->cloudString->operator= (message);

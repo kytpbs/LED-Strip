@@ -14,7 +14,7 @@
  * @param argv The vector to put the arguments in.
  * may return an empty vector if there are no arguments.
 */
-void splitString(String string, std::vector<String>* argv);
+void splitString(const String& string, std::vector<String>* argv);
 
 
 /**
@@ -24,7 +24,7 @@ void splitString(String string, std::vector<String>* argv);
  * @return A vector of strings, each string being an argument.
  * may return an empty vector if there are no arguments.
 */
-std::vector<String> splitStringtoVec(String string);
+std::vector<String> splitStringtoVec(const String& string);
 
 /**
  * Joins a vector of strings into one string.
@@ -32,7 +32,7 @@ std::vector<String> splitStringtoVec(String string);
  * @param separator The string to put between each string.
  * @return The joined string.
 */
-String joinString(std::vector<String>* argv, String separator);
+String joinString(std::vector<String>* argv, const String& separator);
 
 /**
  * Joins a vector of strings into one string.
@@ -52,7 +52,7 @@ String joinString(std::vector<String>* argv);
 
 size_t getDistanceBetweenStrings(String a, String b);
 
-std::string toStdString(String string);
+std::string toStdString(const String& string);
 
-std::tuple<String, int> fuzzyFind(std::vector<String> searchFrom, String toMatch);
+std::tuple<String, int> fuzzyFind(std::vector<String> searchFrom, const String& toMatch);
 #endif

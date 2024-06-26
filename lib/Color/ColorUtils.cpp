@@ -43,14 +43,12 @@ void ColorUtils::getRGBfromHSV(float hue, float sat, float bri, uint8_t& r, uint
 
 void ColorUtils::getHSVfromRGB(uint8_t r, uint8_t g, uint8_t b, float& hue, float& sat, float&bri) {
   float temp[3];
-  float max, min, delta;
-  uint8_t imax;
-  temp[0] = (float)r / 255;
-  temp[1] = (float)g / 255;
-  temp[2] = (float)b / 255;
-  max = temp[0];
-  imax = 0;
-  min = temp[0];
+  uint8_t imax = 0;
+  temp[0] = static_cast<float>(r) / 255;
+  temp[1] = static_cast<float>(g) / 255;
+  temp[2] = static_cast<float>(b) / 255;
+  float max = temp[0];
+  float min = temp[0];
 
   for (uint8_t j = 0; j < 3; j++) {
 
@@ -63,7 +61,7 @@ void ColorUtils::getHSVfromRGB(uint8_t r, uint8_t g, uint8_t b, float& hue, floa
     }
   }
 
-  delta = max - min;
+  float delta = max - min;
   if (delta == 0) {
     hue = 0;
   } else if (imax == 0) {

@@ -24,10 +24,10 @@ typedef std::function<void(CloudSerialSystem*, std::vector<String>*)> CommandTyp
 class CloudSerialSystem {
     private:
         Preferences preferences;
-        String* cloudString;
+        String* cloudString{};
         std::map<String, CommandType> commandsList;
         std::queue<String> printBuffer;
-        long lastPrint = 0;
+        unsigned long lastPrint = 0;
         bool debug = true;
         /**
          * @brief Print the help message for the commands, listing all the commands
@@ -39,13 +39,13 @@ class CloudSerialSystem {
         static command(help);
     public:
     CloudSerialSystem() = default;
-    CloudSerialSystem(String* stringToModify);
+    explicit CloudSerialSystem(String* stringToModify);
     void begin(String* stringToModify);
-    void addCommand(String commandName, CommandType function);
-    void checkForCommands(String command);
+    void addCommand(const String& commandName, CommandType function);
+    void checkForCommands(const String& command);
     void checkForCommands() { this->checkForCommands(*this->cloudString); };
-    void print(String message);
-    void debugPrint(String message);
+    void print(const String& message);
+    void debugPrint(const String& message);
     /**
      * @brief Handle the print queue. This should be called in the cloud loop.
     */
