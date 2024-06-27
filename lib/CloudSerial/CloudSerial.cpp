@@ -61,7 +61,7 @@ void CloudSerialSystem::checkForCommands(const String& command) {
             checkForCommands(name + command.substring(spaceIndex));
         } else {
             String response = "Command not found";
-            if (distance >= commandName.length() - 1) {
+            if (distance <= commandName.length() - 1) {
                 response +=  " did you mean: " + name + "?"
                 + " (" + String(distance) + " distance)";
             }
