@@ -99,16 +99,23 @@ void loop() {
 }
 
 void syncStripToCloud() {
-  // Sync color
   u_int8_t red, green, blue;
   strip.getRGB(red, green, blue);
   float hue, sat, bri;
   ColorUtils::getHSVfromRGB(red, green, blue, hue, sat, bri);
+  // Sync mode
+  mode = strip.getCurrentMode();
+
+  if (bri == 0) {
+    color.setSwitch(false);
+    return;
+  } 
+
+  // Sync color
+  color.setSwitch(true);
   color.setHue(hue);
   color.setSaturation(sat);
   color.setBrightness(bri);
-  // Sync mode
-  mode = strip.getCurrentMode();
 }
 
 void printColorChange() {
