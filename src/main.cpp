@@ -47,6 +47,8 @@ void setup() {
 
 void onCloudSync() {
   Serial.println("Synced with IoT Cloud");
+  //! TEMPORARY FIX, AS THE onModeChange() is not called automatically
+  onModeChange();
   syncedToCloud = true;
   ledStatus = stripController::Status::SYNCED;
 }
@@ -86,13 +88,13 @@ void cloudSetup() {
 }
 
 void loop() {
-  syncStripToCloud();
   ArduinoCloud.update();
   // First updateLEDStatus, as it will change the color of the strip or the mode
   stripController::updateLEDStatus(&strip, ledStatus);
   strip.update();
   if (syncedToCloud) { // only print the queue if we are connected to the cloud, else we will lose the print queue.
     cloudCLI.handlePrintQueue(); // will print the queue if there is something to print, else will do nothing
+    syncStripToCloud();
   }
   // handle OTA updates, only if we are connected to the wifi and the led is not changing due to it taking to much of the loopTime
   if (connectedToCloud) handleOTA();
