@@ -158,6 +158,13 @@ void printModeChange() {
 */
 void onColorChange() {
   printColorChange();
+  if (!color.getSwitch()) {
+    strip.changeModeTo(Modes::Off);
+    return;
+  }
+  if (strip.getCurrentMode() == Modes::Off) {
+    strip.changeModeTo(Modes::Normal);
+  } 
   strip.fillColor(SimpleColor(color.getHue(), color.getSaturation(), color.getBrightness()));
 }
 
