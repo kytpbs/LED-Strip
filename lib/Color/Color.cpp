@@ -12,25 +12,25 @@ SimpleColor::SimpleColor(float hue, float sat, float bri) {
 
     // calculate white using RBG, Saturation and Brightness.
     // Use the opposite of saturation, as 0 is white and 100 is color.
-    this->white = ((100 - sat) / 100.0) * ((bri) / 100.0) * 255;
+    this->white = (100 - sat) / 100.0 * (bri / 100.0) * 255;
 }
 
 int SimpleColor::getHue() const {
     float hue, sat, bri;
     ColorUtils::getHSVfromRGB(this->red, this->green, this->blue, hue, sat, bri);
-    return hue;
+    return static_cast<int>(hue);
 }
 
 int SimpleColor::getSaturation() const {
     float hue, sat, bri;
     ColorUtils::getHSVfromRGB(this->red, this->green, this->blue, hue, sat, bri);
-    return sat;
+    return static_cast<int>(sat);
 }
 
 int SimpleColor::getBrightness() const {
     float hue, sat, bri;
     ColorUtils::getHSVfromRGB(this->red, this->green, this->blue, hue, sat, bri);
-    return bri;
+    return static_cast<int>(bri);
 }
 
 String turnIntToHex(int value) {
