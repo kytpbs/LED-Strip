@@ -11,7 +11,7 @@ enum Status {
     CONNECTED,
     SYNCED,
     OTA,
-    ERROR
+    ERROR = -1
 };
 
 void updateLEDStatus(LedStrip* strip, Status status);

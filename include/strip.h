@@ -5,11 +5,12 @@
 #include "SmoothPin.h"
 
 enum Modes {
-  Normal,
-  Breathe,
-  Rainbow,
-  Blink,
-  Off
+    Off = -1,
+    Normal,
+    Breathe,
+    Rainbow,
+    Blink,
+    RandomColorSwitch,
 };
 
 
@@ -38,6 +39,7 @@ class LedStrip {
         void switchToRainbow();
         void switchToBlink();
         void switchToBreathe();
+        void switchToRandomColorSwitch();
 
         void addToCallList(const LEDCommand& command);
         void changeCallListTo(const LEDCommand& command);

@@ -160,6 +160,19 @@ void LedStrip::switchToBreathe() {
     },true, "Breathe"));
 }
 
+void LedStrip::switchToRandomColorSwitch() {
+    changeCallListTo(LEDCommand([=]() {
+        if (millis() - lastBlinkTime < 250) {
+            return;
+        }
+        
+        lastBlinkTime = millis();
+
+        const SimpleColor color = SimpleColor(random(0, 360), 100, 100);
+        this->smoothChangeTo(color, 500);
+    },true, "RandomColorSwitch"));
+}
+
 void LedStrip::addToCallList(const LEDCommand& command) {
     this->callList.push_back(command);
 }
