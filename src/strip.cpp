@@ -67,6 +67,9 @@ void LedStrip::changeModeTo(Modes mode) {
     case Modes::Blink:
         switchToBlink();
         break;
+    case Modes::RandomColorSwitch:
+        switchToRandomColorSwitch();
+        break;
     }
 }
 
@@ -127,7 +130,7 @@ void LedStrip::switchToRainbow() {
 void LedStrip::switchToBlink() {
     isON = false;
     changeCallListTo(LEDCommand([=]() {
-        if (millis() - lastBlinkTime < 250) {
+        if (millis() - lastBlinkTime < this->blinkMillis) {
             return;
         }
 
@@ -162,14 +165,14 @@ void LedStrip::switchToBreathe() {
 
 void LedStrip::switchToRandomColorSwitch() {
     changeCallListTo(LEDCommand([=]() {
-        if (millis() - lastBlinkTime < 250) {
+        if (millis() - lastBlinkTime < this->blinkMillis) {
             return;
         }
         
         lastBlinkTime = millis();
 
         const SimpleColor color = SimpleColor(random(0, 360), 100, 100);
-        this->smoothChangeTo(color, 500);
+        this->instantChangeTo(color);
     },true, "RandomColorSwitch"));
 }
 

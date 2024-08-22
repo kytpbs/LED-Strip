@@ -22,6 +22,7 @@ class LedStrip {
         bool isON = true; // used by blink and breathe
         unsigned long lastBlinkTime = 0; // only used by blink
         uint16_t rainbowHue = 0; // can't do uint8_t because it will overflow
+        uint8_t blinkMillis = 250; // used by blink and random color switch
         SimpleColor currentColor;
 
         SmoothPin redPin;
@@ -76,6 +77,10 @@ class LedStrip {
          * @param mode mode to change to
         */
         void changeModeTo(Modes mode);
+
+        void setBlinkMillis(uint8_t millis) {
+            blinkMillis = millis;
+        }
 
         Modes getCurrentMode() {
             return currentMode;
