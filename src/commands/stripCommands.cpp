@@ -62,10 +62,23 @@ command(setMode) {
     m_strip->changeModeTo(modeEnum);
 }
 
+command(updateBlinkTime) {
+    _EARLY_RETURN_IF_NULL_STRIP();
+    if (argv->empty()) {
+        cloudSerialSystem->print("Usage: updateBlinkTime <uint8_t time>");
+        return;
+    }
+
+    const uint8_t time = argv->at(0).toInt();
+    m_strip->setBlinkMillis(time);
+    cloudSerialSystem->print("Updated blink time to: " + String(time) + "ms");
+}
+
 namespace stripCommands {
     void setupCommands(CloudSerialSystem* cloudSerialSystem, LedStrip* ledStrip) {
         m_strip = ledStrip;
         cloudSerialSystem->addCommand("fillColor", fillColor);
         cloudSerialSystem->addCommand("setMode", setMode);
+        cloudSerialSystem->addCommand("updateBlinkTime", updateBlinkTime);
     }
 }
