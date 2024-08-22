@@ -40,6 +40,10 @@ command(setDebugMode) {
     cloudSerialSystem->print("Invalid argument! Not changing debug mode. Current debug mode: " + String(cloudSerialSystem->getDebug() ? "true" : "false"));
 }
 
+command(getTemp) {
+    cloudSerialSystem->print(String(temperatureRead()) + "°C");
+}
+
 namespace simpleCommands {
     void setupCommands(CloudSerialSystem* cloudSerialSystem) {
         cloudSerialSystem->addCommand("ping", ping);
@@ -47,5 +51,6 @@ namespace simpleCommands {
         cloudSerialSystem->addCommand("reboot", reboot);
         cloudSerialSystem->addCommand("getIP", getIP);
         cloudSerialSystem->addCommand("setDebugMode", setDebugMode);
+        cloudSerialSystem->addCommand("getTemp", getTemp);
     }
 }
