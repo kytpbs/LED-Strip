@@ -1,8 +1,10 @@
 #include "commands/stripCommands.h"
 
-LedStrip* m_strip;
+LedStrip* m_strip = nullptr;
+#define _EARLY_RETURN_IF_NULL_STRIP() if (m_strip == nullptr) { cloudSerialSystem->print("Strip is not initialized!"); return; }
 
 command(fillColor) {
+    _EARLY_RETURN_IF_NULL_STRIP();
     if (argv->size() < 3) {
         cloudSerialSystem->print("Usage: fillColor <red> <green> <blue> ?<white>");
         return;
@@ -25,6 +27,7 @@ command(fillColor) {
 }
 
 command(setMode) {
+    _EARLY_RETURN_IF_NULL_STRIP();
     if (argv->empty()) {
         cloudSerialSystem->print("Usage: setMode <mode>");
         return;
