@@ -88,7 +88,7 @@ void cloudSetup() {
      The default is 0 (only errors).
      Maximum is 4
   */
-  setDebugMessageLevel(0);
+  setDebugMessageLevel(3);
   ArduinoCloud.printDebugInfo();
 }
 
