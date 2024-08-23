@@ -18,6 +18,8 @@ stripController::Status ledStatus = stripController::Status::UNKNOWN;
 bool connectedToCloud = false;
 bool syncedToCloud = false;
 
+wl_status_t lastWifiStatus = WL_DISCONNECTED;
+
 /* START FUNCTION DEFINITIONS */
 
 void onCloudSync();
@@ -25,6 +27,7 @@ void onCloudConnect();
 void onCloudDisconnect();
 void cloudSetup();
 
+void handleWiFiStatus();
 void syncStripToCloud();
 void printColorChange();
 void printModeChange();
@@ -57,6 +60,7 @@ void onCloudConnect() {
   Serial.println("Connected to IoT Cloud");
   connectedToCloud = true;
   ledStatus = stripController::Status::CONNECTED;
+  lastWifiStatus = WL_CONNECTED;
   setupOTA();
 }
 
@@ -64,6 +68,7 @@ void onCloudDisconnect() {
   Serial.println("Disconnected from IoT Cloud");
   ledStatus = stripController::Status::DISCONNECTED;
   syncedToCloud = false;
+  lastWifiStatus = WL_DISCONNECTED;
 }
 
 void cloudSetup() {
@@ -88,8 +93,11 @@ void cloudSetup() {
 }
 
 void loop() {
-  ArduinoCloud.update();
   // First updateLEDStatus, as it will change the color of the strip or the mode
+  ArduinoCloud.update();
+  // Separately check wifi status just in case something has gone wrong with arduino cloud
+  // and we want to be able to OTA
+  handleWiFiStatus();
   stripController::updateLEDStatus(&strip, ledStatus);
   strip.update();
   if (syncedToCloud) { // only print the queue if we are connected to the cloud, else we will lose the print queue.
@@ -98,6 +106,20 @@ void loop() {
   }
   // handle OTA updates, only if we are connected to the wifi and the led is not changing due to it taking to much of the loopTime
   if (connectedToCloud) handleOTA();
+}
+
+void handleWiFiStatus() {
+  auto status = WiFi.status();
+  if (status != lastWifiStatus) {
+    lastWifiStatus = WiFi.status();
+    if (status == WL_CONNECTED) {
+      onCloudConnect();
+    }
+    if (status == WL_DISCONNECTED) {
+      onCloudDisconnect();
+    }
+    stripController::updateLEDStatus(&strip, ledStatus);
+  }
 }
 
 void syncStripToCloud() {
