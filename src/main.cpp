@@ -75,6 +75,7 @@ void cloudSetup() {
   // Defined in thingProperties.h
   initProperties();
   cloudCLI.begin(&cloudSerial);
+  configureWiFi();
 
   // Connect to Arduino IoT Cloud
   ArduinoCloud.begin(ArduinoIoTPreferredConnection);

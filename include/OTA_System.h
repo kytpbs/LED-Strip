@@ -21,6 +21,11 @@
 #include <ElegantOTA.h>
 #include <ArduinoOTA.h> // PlatformIO upload uses this library
 
+/**
+ * @brief Configure the WiFi to use a static IP
+ * @note This function should be called before setupOTA() and before connecting to the WiFi 
+ */
+void configureWiFi();
 
 /**
  * @brief Setup the OTA update system
