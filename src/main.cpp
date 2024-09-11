@@ -9,6 +9,7 @@
 #include "thingProperties.h"
 #include "strip.h"
 #include "stripController.h"
+#include "HomeKit.h"
 
 #include "commands/commands.h"
 
@@ -46,6 +47,7 @@ void setup() {
   // Setup Cloud
   cloudSetup();
   setupCommands(&cloudCLI, &strip);
+  HomeKit::setupHomeKit();
 }
 
 void onCloudSync() {
