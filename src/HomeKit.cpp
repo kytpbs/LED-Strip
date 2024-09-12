@@ -1,24 +1,24 @@
 #include "HomeSpan.h"
 #include "HomeKit.h"
+#include "HomeKitStrip.h"
+#include "CloudSerial.h"
 
+HomeKitStrip* homeKitStrip;
 
-void HomeKit::setupHomeKit() {
+void HomeKit::setupHomeKit(LedStrip* strip) {
+    cloudCLI.debugPrint("Setting up HomeKit, please wait...");
     homeSpan.begin(Category::Lighting, "LED Strip");
 
     new SpanAccessory();
+    new Service::AccessoryInformation();
+    new Characteristic::Identify();
+    new Characteristic::Model();
 
-    {
-        new Service::AccessoryInformation();
-        new Characteristic::Identify();
-        new Characteristic::Model("RGBW Strip");
-        new Characteristic::On();
-        new Characteristic::Hue(180); // default value of CYAN
-        new Characteristic::Saturation(100); // default value of CYAN
-        new Characteristic::Brightness(100); // default value of ON
-    }
+    homeKitStrip = new HomeKitStrip(strip);
+    cloudCLI.debugPrint("HomeKit setup complete!");
 }
 
 void HomeKit::update() {
     homeSpan.poll();
+    homeKitStrip->sync();
 }
-

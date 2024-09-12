@@ -47,7 +47,7 @@ void setup() {
   // Setup Cloud
   cloudSetup();
   setupCommands(&cloudCLI, &strip);
-  HomeKit::setupHomeKit();
+  HomeKit::setupHomeKit(&strip);
 }
 
 void onCloudSync() {
