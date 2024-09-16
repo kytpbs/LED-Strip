@@ -171,7 +171,11 @@ void LedStrip::switchToRandomColorSwitch() {
         
         lastBlinkTime = millis();
 
-        const SimpleColor color = SimpleColor(random(0, 360), 100, 100);
+        auto hue = this->currentColor.getHue();
+        hue += random(60, 180);
+        hue %= 360;
+        const auto color = SimpleColor(hue, 100, 100);
+        this->currentColor = color;
         this->instantChangeTo(color);
     },true, "RandomColorSwitch"));
 }
