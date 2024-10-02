@@ -223,4 +223,5 @@ void onCloudSerialChange() {
   Serial.println(cloudSerial);
 
   cloudCLI.checkForCommands();
+  HomeKit::processCommand(cloudSerial);
 }

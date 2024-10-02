@@ -22,3 +22,7 @@ void HomeKit::update() {
     homeSpan.poll();
     homeKitStrip->sync();
 }
+
+void HomeKit::processCommand(String command) {
+    homeSpan.processSerialCommand(command.c_str());
+}
