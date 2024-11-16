@@ -1,5 +1,7 @@
 #pragma once
 #include <list>
+#include <Preferences.h>
+
 #include <Color.h>
 #include "LEDCommand.h"
 #include "SmoothPin.h"
@@ -16,6 +18,8 @@ enum Modes {
 
 class LedStrip {
     private:
+        Preferences preferences;
+
         Modes currentMode = Modes::Off;
         Modes lastMode = Modes::Off; // used for night mode
         bool nightModeActive = false;
@@ -88,8 +92,6 @@ class LedStrip {
 
         SimpleColor getCurrentColor();
         bool isChanging();
-        bool isNightMode() const {
-            return nightModeActive;
-        }
+        bool isNightMode();
         void getRGB(uint8_t &r, uint8_t &g, uint8_t &b);
 };

@@ -1,5 +1,8 @@
 #include "strip.h"
 
+
+bool isNightModeStored = false;
+
 /* PUBLIC FUNCTIONS */
 LedStrip::LedStrip(uint8_t redPin, uint8_t greenPin, uint8_t bluePin, uint8_t whitePin) {
     pinMode(redPin, OUTPUT);
@@ -74,6 +77,14 @@ void LedStrip::changeModeTo(Modes mode) {
 }
 
 void LedStrip::setNightMode(bool active) {
+    if (this->isNightMode() == active) {
+        return;
+    }
+
+    this->preferences.begin("ledStrip", false);
+    this->preferences.putBool("nightMode", active);
+    this->preferences.end();
+
     if (active) {
         Serial.println("Changing mode to Night");
         this->lastMode = this->currentMode;
@@ -191,4 +202,15 @@ void LedStrip::changeCallListTo(const LEDCommand& command) {
 
 bool LedStrip::isChanging() {
     return this->redPin.isChanging() || this->greenPin.isChanging() || this->bluePin.isChanging() || this->whitePin.isChanging();
+}
+
+bool LedStrip::isNightMode() {
+    if (!isNightModeStored) {
+        this->preferences.begin("ledStrip", true);
+        this->nightModeActive = this->preferences.getBool("nightMode", this->nightModeActive);
+        this->preferences.end();
+        isNightModeStored = true;
+    }
+
+    return this->nightModeActive;
 }
