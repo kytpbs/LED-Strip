@@ -57,18 +57,20 @@ void onCloudSync() {
 }
 
 void onCloudConnect() {
+  if (connectedToCloud) return; // do not run this function if we are already connected
+
   Serial.println("Connected to IoT Cloud");
   connectedToCloud = true;
   ledStatus = stripController::Status::CONNECTED;
-  lastWifiStatus = WL_CONNECTED;
   setupOTA();
 }
 
 void onCloudDisconnect() {
+  if (!connectedToCloud) return; // do not run this function if we are already disconnected
+
   Serial.println("Disconnected from IoT Cloud");
   ledStatus = stripController::Status::DISCONNECTED;
   syncedToCloud = false;
-  lastWifiStatus = WL_DISCONNECTED;
 }
 
 void cloudSetup() {
