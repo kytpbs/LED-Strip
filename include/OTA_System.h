@@ -50,4 +50,6 @@ void onOTAStart();
 */
 void onOTAEnd(bool success);
 
+extern WebServer server;
+
 #endif
