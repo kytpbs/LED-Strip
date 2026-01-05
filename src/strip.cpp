@@ -98,7 +98,10 @@ void LedStrip::setNightMode(bool active) {
 }
 
 SimpleColor LedStrip::getCurrentColor() {
-    return SimpleColor(this->redPin.getTargetValue(), this->greenPin.getTargetValue(), this->bluePin.getTargetValue(), this->whitePin.getTargetValue());
+    return SimpleColor(255 - this->redPin.getTargetValue(),
+                        255 - this->greenPin.getTargetValue(),
+                        255 - this->bluePin.getTargetValue(),
+                        255 - this->whitePin.getTargetValue());
 }
 
 void LedStrip::getRGB(uint8_t &r, uint8_t &g, uint8_t &b) {

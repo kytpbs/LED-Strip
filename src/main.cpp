@@ -125,6 +125,7 @@ void handleWiFiStatus() {
 }
 
 void syncStripToCloud() {
+  SimpleColor stripColor = strip.getCurrentColor();
   u_int8_t red, green, blue;
   strip.getRGB(red, green, blue);
   float hue, sat, bri;
@@ -139,7 +140,7 @@ void syncStripToCloud() {
 
   // Sync color
   color.setSwitch(true);
-  color.setHue(hue);
+  color.setHue(stripColor.getHue());
   color.setSaturation(sat);
   color.setBrightness(bri);
 }

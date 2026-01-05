@@ -91,6 +91,7 @@ class LedStrip {
         };
 
         SimpleColor getCurrentColor();
+        SimpleColor getTargetColor() const { return currentColor; };
         bool isChanging();
         bool isNightMode();
         void getRGB(uint8_t &r, uint8_t &g, uint8_t &b);
