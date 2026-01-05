@@ -47,9 +47,9 @@ void setupAPI(LedStrip& ledStrip) {
         JsonDocument colorJson;
         DeserializationError error = deserializeJson(colorJson, inputJsonString);
 
-        auto hue = colorJson["hue"];
-        auto saturation = colorJson["saturation"];
-        auto brightness = colorJson["brightness"];
+        const auto& hue = colorJson["hue"];
+        const auto& saturation = colorJson["saturation"];
+        const auto& brightness = colorJson["brightness"];
         bool is_valid = hue.is<int>() && saturation.is<int>() && brightness.is<int>();
 
         if (error || !is_valid) {
@@ -75,7 +75,7 @@ void setupAPI(LedStrip& ledStrip) {
         JsonDocument nightModeJson;
         DeserializationError error = deserializeJson(nightModeJson, inputJsonString);
 
-        auto nightMode = nightModeJson["nightMode"];
+        const auto& nightMode = nightModeJson["nightMode"];
         bool is_valid = nightMode.is<bool>();
 
         if (error || !is_valid) {
