@@ -28,7 +28,7 @@ void setupOTA() {
     cloudCLI.print("CURRENT IP: " + WiFi.localIP().toString());
 
     server.on("/", [] {
-        server.sendHeader("Location", "/update");
+        server.sendHeader("Location", "/app");
         server.send(302);
     });
 

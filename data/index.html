@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED Strip Control</title>
+</head>
+<body>
+    <h1>
+        LED Strip Control 
+        <br>
+        <a href="/update" style="font-size: x-large;">OTA Update</a>
+    </h1>
+    <div>
+        <p>
+
+        </p>
+    </div>
+    <form id="night-mode-form">
+        <label for="night-mode">Night Mode:</label>
+        <input type="checkbox" id="night-mode" name="night-mode">
+    </form>
+    <div>
+        <p></p> <!-- Empty Space -->
+    </div>
+    <form id="colorForm">
+        <label for="hue">Hue:</label>
+        <input type="number" id="hue" name="hue" min="0" max="360" required>
+        <br>
+        <label for="saturation">Saturation:</label>
+        <input type="number" id="saturation" name="saturation" min="0" max="100" value="100">
+        <br>
+        <label for="brightness">Brightness:</label>
+        <input type="number" id="brightness" name="brightness" min="0" max="100" value="100">
+        <br>
+        <button type="submit">Set Color</button>
+    </form>
+    <button id="pingButton">Ping</button>
+    <div id="response"></div>
+
+    <script>
+        fetch('/api/color')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('hue').value = data.hue;
+            document.getElementById('saturation').value = data.saturation;
+            document.getElementById('brightness').value = data.brightness;
+        })
+
+        fetch('/api/night-mode')
+        .then(response => response.json())
+        .then(data => {
+            const element = document.getElementById('night-mode');
+            element.checked = true;
+            // document.getElementById('night-mode').checked = data.nightMode;
+        })
+
+        document.getElementById('night-mode').addEventListener('change', function(event) {
+            fetch('/api/night-mode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nightMode: event.target.checked })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').innerText = JSON.stringify(data);
+            })
+            .catch(error => {
+                document.getElementById('response').innerText = 'Error: ' + error;
+            });
+        });
+
+        document.getElementById('colorForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const hue = document.getElementById('hue').value;
+            const saturation = document.getElementById('saturation').value;
+            const brightness = document.getElementById('brightness').value;
+
+            fetch('/api/color', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ hue: parseInt(hue), saturation: parseInt(saturation), brightness: parseInt(brightness) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').innerText = JSON.stringify(data);
+            })
+            .catch(error => {
+                document.getElementById('response').innerText = 'Error: ' + error;
+            });
+        });
+
+        document.getElementById('pingButton').addEventListener('click', async function() {
+            fetch('/api/ping')
+            .then(response => response.json()
+            .then(data => {
+                document.getElementById('response').innerText = JSON.stringify(data);
+                if (data.message === 'Pong') {
+                    document.getElementById('pingButton').style.backgroundColor = 'green';
+                }
+            })
+            .catch(error => {
+                document.getElementById('pingButton').style.backgroundColor = 'red';
+                document.getElementById('response').innerText = 'Error: ' + error;
+            }));
+        });
+    </script>
+</body>
+</html>
