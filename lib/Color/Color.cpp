@@ -5,10 +5,22 @@ SimpleColor::SimpleColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t white
     this->green = green;
     this->blue = blue;
     this->white = white;
+
+    float hue, sat, bri;
+    ColorUtils::getHSVfromRGB(red, green, blue, hue, sat, bri);
+
+    this->hue = static_cast<uint16_t>(hue);
+    this->sat = static_cast<uint8_t>(sat);
+    this->bri = static_cast<uint8_t>(bri);
 }
 
 SimpleColor::SimpleColor(float hue, float sat, float bri) {
+    // calculate RGB using HSV
     ColorUtils::getRGBfromHSV(hue, sat, bri, this->red, this->green, this->blue);
+
+    this->hue = static_cast<uint16_t>(hue);
+    this->sat = static_cast<uint8_t>(sat);
+    this->bri = static_cast<uint8_t>(bri);
 
     // calculate white using RBG, Saturation and Brightness.
     // Use the opposite of saturation, as 0 is white and 100 is color.
@@ -16,21 +28,15 @@ SimpleColor::SimpleColor(float hue, float sat, float bri) {
 }
 
 int SimpleColor::getHue() const {
-    float hue, sat, bri;
-    ColorUtils::getHSVfromRGB(this->red, this->green, this->blue, hue, sat, bri);
-    return static_cast<int>(hue);
+    return this->hue;
 }
 
 int SimpleColor::getSaturation() const {
-    float hue, sat, bri;
-    ColorUtils::getHSVfromRGB(this->red, this->green, this->blue, hue, sat, bri);
-    return static_cast<int>(sat);
+    return this->sat;
 }
 
 int SimpleColor::getBrightness() const {
-    float hue, sat, bri;
-    ColorUtils::getHSVfromRGB(this->red, this->green, this->blue, hue, sat, bri);
-    return static_cast<int>(bri);
+    return this->bri;
 }
 
 String turnIntToHex(int value) {

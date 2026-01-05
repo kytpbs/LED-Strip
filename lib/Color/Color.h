@@ -4,10 +4,17 @@
 
 class SimpleColor {
 public:
+    // Hold onto both RGB and HSV values this way we can convert without recalculating,
+    // and also we reduce the side effects of converting between them
+
     uint8_t red = 0;
     uint8_t green = 0;
     uint8_t blue = 0;
     uint8_t white = 0;
+
+    uint16_t hue = 0;
+    uint8_t sat = 0;
+    uint8_t bri = 0;
 
     /**
      * @brief Construct a new SimpleColor object
