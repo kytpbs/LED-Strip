@@ -23,7 +23,7 @@ void setupAPI(LedStrip& ledStrip) {
 
     server.on("/app", HTTP_GET, [] () {
         File file = SPIFFS.open("/index.html", "r");
-        if (!file) {
+        if (!file || file.isDirectory() || file.size() == 0) {
             server.send(500, "text/html", "Failed to open file");
             cloudCLI.debugPrint("Failed to open index.html file");
             return;
