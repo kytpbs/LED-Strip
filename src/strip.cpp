@@ -10,6 +10,10 @@ LedStrip::LedStrip(uint8_t redPin, uint8_t greenPin, uint8_t bluePin, uint8_t wh
     pinMode(bluePin, OUTPUT);
     pinMode(whitePin, OUTPUT);
 
+#ifdef ARDUINO_ARCH_ESP32
+    analogWriteFrequency(2000);
+#endif
+
     this->redPin = SmoothPin(redPin);
     this->greenPin = SmoothPin(greenPin);
     this->bluePin = SmoothPin(bluePin);
