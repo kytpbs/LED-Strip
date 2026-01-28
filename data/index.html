@@ -51,7 +51,7 @@
         .then(response => response.json())
         .then(data => {
             const element = document.getElementById('night-mode');
-            element.checked = true;
+            element.checked = data.nightMode;
             // document.getElementById('night-mode').checked = data.nightMode;
         })
 
