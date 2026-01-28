@@ -13,6 +13,11 @@
 /dataSources/
 /dataSources.local.xml
 
+# Clangd
+.clangd
+.cache/
+compile_commands.json
+
 # Costom
 /.idea
 arduino_secrets.h
