@@ -6,11 +6,11 @@
     WebServer server(80);
 #endif
 
-IPAddress local_IP(192, 168, 0, 2);
-IPAddress gateway(192, 168, 0, 1);
+IPAddress local_IP(192, 168, 1, 5);
+IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
-IPAddress primaryDNS(94, 140, 14, 49);    // AdGuard DNS
-IPAddress secondaryDNS(94, 140, 14, 59);  // AdGuard DNS
+IPAddress primaryDNS(94, 140, 14, 49); // AdGuard DNS
+IPAddress secondaryDNS(8, 8, 8, 8);  // Google DNS
 
 void configureWiFi() {
     if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
