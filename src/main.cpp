@@ -4,7 +4,6 @@
 #include <ArduinoIoTCloud.h>
 #include "CloudSerial.h" // private library, on lib/CloudSerial
 #include "OTA_System.h"
-#include "arduino_secrets.h"
 #include "Constants.h"
 #include "thingProperties.h"
 #include "strip.h"
