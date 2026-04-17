@@ -1,5 +1,7 @@
 #pragma once
 
+#define DEFAULT_WOL_MAC_ADDRESS {0xbc, 0xe9, 0x2f, 0x7c, 0xde, 0xf0}
+
 #ifdef ARDUINO_ARCH_ESP32
 #define GREEN_PIN 19
 #define RED_PIN 18
