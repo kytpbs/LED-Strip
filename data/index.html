@@ -165,6 +165,28 @@
     .row .label { font-size: 15px; }
     .row .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
 
+    .mode-select {
+        appearance: none;
+        -webkit-appearance: none;
+        background: #232732;
+        color: var(--text);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-sm);
+        padding: 10px 36px 10px 14px;
+        font-size: 14px;
+        font-family: inherit;
+        cursor: pointer;
+        background-image:
+            linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+            linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+        background-position: right 16px center, right 11px center;
+        background-size: 5px 5px, 5px 5px;
+        background-repeat: no-repeat;
+        transition: border-color .15s;
+    }
+    .mode-select:hover, .mode-select:focus { border-color: var(--accent); outline: none; }
+    .mode-select option { background: var(--card); color: var(--text); }
+
     /* Toggle */
     .toggle { position: relative; width: 48px; height: 28px; flex: none; }
     .toggle input { opacity: 0; width: 0; height: 0; }
@@ -336,8 +358,25 @@
     <section class="card">
         <div class="row">
             <div>
+                <div class="label">Mode</div>
+                <div class="sub">Animation pattern for the strip</div>
+            </div>
+            <select id="mode" class="mode-select" aria-label="Strip mode">
+                <option value="-1">Off</option>
+                <option value="0">Normal</option>
+                <option value="1">Breathe</option>
+                <option value="2">Rainbow</option>
+                <option value="3">Blink</option>
+                <option value="4">Random Color Switch</option>
+            </select>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="row">
+            <div>
                 <div class="label">Night Mode</div>
-                <div class="sub">Dim output, keep colors warm</div>
+                <div class="sub">Scheduled via Arduino Cloud</div>
             </div>
             <label class="toggle">
                 <input type="checkbox" id="night-mode">
@@ -382,6 +421,7 @@
     const hueOut = $('hueOut'), satOut = $('satOut'), brightOut = $('brightOut');
     const swatch = $('swatch'), hexLabel = $('hexLabel');
     const nightToggle = $('night-mode');
+    const modeSelect = $('mode');
     const pingBtn = $('pingButton'), pingDot = $('pingDot');
     const toast = $('toast');
     const modal = $('modal'), modalClose = $('modalClose');
@@ -436,27 +476,42 @@
         drawMarker();
     }
 
-    // --- Persistence + shared state ---
-    const LS_KEY = 'ledstrip.lastColor';
-    let currentNightMode = false;
+    // --- Shared state ---
     let lastLocalChange = 0;
-    function saveColorLocal() {
-        try {
-            const [h, s, v] = currentHSV();
-            localStorage.setItem(LS_KEY, JSON.stringify({ h, s, v }));
-        } catch (_) {}
+
+    // --- Slider tweening ---
+    let animRAF = null;
+    const ANIM_DURATION = 300;
+    function cancelAnim() {
+        if (animRAF !== null) { cancelAnimationFrame(animRAF); animRAF = null; }
     }
-    function loadColorLocal() {
-        try {
-            const raw = localStorage.getItem(LS_KEY);
-            return raw ? JSON.parse(raw) : null;
-        } catch (_) { return null; }
+    function shortestHueDelta(from, to) {
+        return ((to - from + 540) % 360) - 180;
+    }
+    function animateToColor(h, s, v) {
+        const [h0, s0, v0] = currentHSV();
+        if (h0 === h && s0 === s && v0 === v) { cancelAnim(); return; }
+        cancelAnim();
+        const dh = shortestHueDelta(h0, h);
+        const ds = s - s0;
+        const dv = v - v0;
+        const start = performance.now();
+        const step = (now) => {
+            const t = Math.min(1, (now - start) / ANIM_DURATION);
+            const eased = 1 - Math.pow(1 - t, 3);
+            hueEl.value = Math.round(((h0 + dh * eased) + 360) % 360);
+            satEl.value = Math.round(s0 + ds * eased);
+            brightEl.value = Math.round(v0 + dv * eased);
+            bright2.value = brightEl.value;
+            paintUI();
+            animRAF = t < 1 ? requestAnimationFrame(step) : null;
+        };
+        animRAF = requestAnimationFrame(step);
     }
 
-    // --- Debounced POST (skipped while night mode is on) ---
+    // --- Debounced color POST ---
     let postTimer = null, inFlight = false, pending = null;
     async function doPost() {
-        if (currentNightMode) return; // don't command device while it's "off"
         if (inFlight) { pending = true; return; }
         inFlight = true;
         const [h, s, v] = currentHSV();
@@ -475,8 +530,8 @@
         }
     }
     function scheduleColorPost() {
+        cancelAnim();
         lastLocalChange = Date.now();
-        saveColorLocal();
         clearTimeout(postTimer);
         postTimer = setTimeout(doPost, 150);
     }
@@ -502,27 +557,33 @@
         el.addEventListener('input', () => onSliderInput(el));
     });
 
+    // --- Mode select ---
+    modeSelect.addEventListener('change', async () => {
+        const want = modeSelect.value;
+        lastLocalChange = Date.now();
+        try {
+            const r = await fetch('/api/mode', {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: want
+            });
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+        } catch (e) {
+            showToast('Mode update failed: ' + e.message, true);
+        }
+    });
+
     // --- Night mode ---
-    async function postNightMode(on) {
-        const r = await fetch('/api/night-mode', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nightMode: on })
-        });
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-    }
     nightToggle.addEventListener('change', async () => {
         const want = nightToggle.checked;
+        lastLocalChange = Date.now();
         try {
-            await postNightMode(want);
-            currentNightMode = want;
-            // When turning night mode off, push the UI's remembered color so
-            // the strip lights up with what the user has in the sliders,
-            // overriding the server's lastMode restore.
-            if (!want) {
-                clearTimeout(postTimer);
-                await doPost();
-            }
+            const r = await fetch('/api/night-mode', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nightMode: want })
+            });
+            if (!r.ok) throw new Error('HTTP ' + r.status);
         } catch (e) {
             nightToggle.checked = !want;
             showToast('Night mode failed: ' + e.message, true);
@@ -646,26 +707,24 @@
             if (Date.now() - lastLocalChange < 800) return;
             if (wheelDragging) return;
         }
-        let colorRes, nightRes;
+        let colorRes, nightRes, modeRes;
         try {
-            [colorRes, nightRes] = await Promise.all([
+            [colorRes, nightRes, modeRes] = await Promise.all([
                 fetch('/api/color'),
-                fetch('/api/night-mode')
+                fetch('/api/night-mode'),
+                fetch('/api/mode')
             ]);
         } catch (e) {
             if (isInitial) showToast('Could not load state: ' + e.message, true);
             return;
         }
-        let serverNight = currentNightMode;
         if (nightRes && nightRes.ok) {
             try {
                 const n = await nightRes.json();
-                serverNight = !!n.nightMode;
+                const serverNight = !!n.nightMode;
+                if (nightToggle.checked !== serverNight) nightToggle.checked = serverNight;
             } catch (_) {}
         }
-        // Update toggle if it diverges from server (e.g. external change).
-        if (nightToggle.checked !== serverNight) nightToggle.checked = serverNight;
-        currentNightMode = serverNight;
 
         // User may have started interacting during the awaited fetch —
         // re-check before overwriting slider state.
@@ -674,19 +733,19 @@
             Date.now() - lastLocalChange < 800
         );
 
-        // Only sync color sliders when the strip is actually lit — during
-        // night mode the API returns (0,0,0) which would wipe the user's pick.
-        if (!userBusy && !serverNight && colorRes && colorRes.ok) {
+        if (!userBusy && colorRes && colorRes.ok) {
             try {
                 const c = await colorRes.json();
                 applyColorFromServer(c);
-                saveColorLocal();
             } catch (_) {}
-        } else if (isInitial && serverNight) {
-            // Night mode is on at page load — restore the last color the user
-            // picked on this browser so the sliders aren't stuck at zero.
-            const cached = loadColorLocal();
-            if (cached) applyColorFromServer({ hue: cached.h, saturation: cached.s, brightness: cached.v });
+        }
+        if (modeRes && modeRes.ok) {
+            try {
+                const m = await modeRes.json();
+                if (typeof m.mode === 'number' && !userBusy) {
+                    modeSelect.value = String(m.mode);
+                }
+            } catch (_) {}
         }
         paintUI();
     }

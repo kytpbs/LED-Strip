@@ -31,6 +31,24 @@ void setupAPI(LedStrip& ledStrip) {
         server.send(200, "text/html", file.readString());
     });
 
+    server.on("/api/mode", HTTP_GET, [] () {
+        char buf[32];
+        snprintf(buf, sizeof(buf), "{\"mode\": %d}", static_cast<int>(stripPointer->getCurrentMode()));
+        server.send(200, "application/json", buf);
+    });
+
+    server.on("/api/mode", HTTP_POST, [] () {
+        if (!server.hasArg("plain")) {
+            server.send(400, "application/json", "{\"error\": \"No body provided\"}");
+            return;
+        }
+        String enumId = server.arg("plain");
+        auto mode = enumId.toInt();
+
+        stripPointer->changeModeTo(static_cast<Modes>(mode));
+        server.send(200, "application/json", "{\"success\": \"Mode Updated\"}");
+    });
+
     server.on("/api/color", HTTP_GET, [] () {
         char colorJsonBuffer[256]; // If this is over 256 we are cooked...
         auto colorJson = fetchColorAsJson();
