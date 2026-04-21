@@ -1,113 +1,699 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LED Strip Control</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>LED Strip Control</title>
+<style>
+    :root {
+        --bg: #0e0f13;
+        --bg-grad-1: #151820;
+        --bg-grad-2: #0a0b10;
+        --card: #1a1d25;
+        --card-border: #2a2e3a;
+        --text: #e8eaf0;
+        --muted: #8a8f9c;
+        --accent: #ff00aa;
+        --danger: #e5484d;
+        --success: #30a46c;
+        --radius: 14px;
+        --radius-sm: 10px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+        margin: 0;
+        padding: 0;
+        background: radial-gradient(1200px 600px at 50% -100px, var(--bg-grad-1), var(--bg-grad-2)) fixed;
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+    }
+    .wrap {
+        max-width: 440px;
+        margin: 0 auto;
+        padding: 28px 18px 120px;
+    }
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+    h1 {
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin: 0;
+    }
+    .ota {
+        font-size: 13px;
+        color: var(--muted);
+        text-decoration: none;
+        padding: 8px 12px;
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-sm);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: border-color .15s, color .15s;
+    }
+    .ota:hover { color: var(--text); border-color: var(--accent); }
+    .card {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius);
+        padding: 20px;
+        margin-bottom: 14px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    }
+    .color-head {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+    .swatch {
+        width: 72px;
+        height: 72px;
+        border-radius: var(--radius-sm);
+        background: var(--accent);
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 4px 24px -4px var(--accent), inset 0 0 0 2px rgba(255,255,255,0.05);
+        cursor: pointer;
+        transition: transform .12s ease;
+        flex: none;
+        position: relative;
+    }
+    .swatch:active { transform: scale(0.96); }
+    .swatch::after {
+        content: "";
+        position: absolute;
+        right: 6px; bottom: 6px;
+        width: 18px; height: 18px;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.45);
+        background-image: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+        background-clip: padding-box;
+        border: 2px solid rgba(255,255,255,0.85);
+        opacity: 0.9;
+    }
+    .color-meta { display: flex; flex-direction: column; gap: 2px; }
+    .color-meta .hex {
+        font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        font-size: 15px;
+        letter-spacing: 0.02em;
+    }
+    .color-meta .hint { color: var(--muted); font-size: 12px; }
+    .slider-row {
+        display: grid;
+        grid-template-columns: 70px 1fr 52px;
+        align-items: center;
+        gap: 12px;
+        margin-top: 14px;
+    }
+    .slider-row label {
+        font-size: 13px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    .slider-row output {
+        font-variant-numeric: tabular-nums;
+        font-size: 14px;
+        text-align: right;
+        color: var(--text);
+    }
+    input[type=range] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 12px;
+        border-radius: 8px;
+        background: #2a2e3a;
+        outline: none;
+        cursor: pointer;
+    }
+    #hue { background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); }
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid rgba(0,0,0,0.3);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        cursor: grab;
+    }
+    input[type=range]::-moz-range-thumb {
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid rgba(0,0,0,0.3);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        cursor: grab;
+    }
+    input[type=range]:active::-webkit-slider-thumb { cursor: grabbing; transform: scale(1.08); }
+
+    .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+    .row .label { font-size: 15px; }
+    .row .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+    /* Toggle */
+    .toggle { position: relative; width: 48px; height: 28px; flex: none; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle .track {
+        position: absolute; inset: 0;
+        background: #2a2e3a;
+        border-radius: 999px;
+        transition: background .18s;
+        cursor: pointer;
+    }
+    .toggle .track::before {
+        content: "";
+        position: absolute;
+        left: 3px; top: 3px;
+        width: 22px; height: 22px;
+        background: #fff;
+        border-radius: 50%;
+        transition: transform .18s;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .toggle input:checked + .track { background: var(--accent); }
+    .toggle input:checked + .track::before { transform: translateX(20px); }
+
+    /* Ping */
+    .ping-row { display: flex; align-items: center; gap: 12px; }
+    .ping-btn {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px 16px;
+        background: #232732;
+        color: var(--text);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-sm);
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background .15s, border-color .15s;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .ping-btn:hover { background: #2a2e3a; }
+    .ping-dot {
+        width: 10px; height: 10px; border-radius: 50%;
+        background: var(--muted);
+        box-shadow: 0 0 0 0 currentColor;
+    }
+    .ping-btn.ok { border-color: var(--success); }
+    .ping-btn.ok .ping-dot { background: var(--success); animation: pulse 1.2s ease-out; color: var(--success); }
+    .ping-btn.err { border-color: var(--danger); }
+    .ping-btn.err .ping-dot { background: var(--danger); color: var(--danger); }
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 currentColor; }
+        100% { box-shadow: 0 0 0 14px transparent; }
+    }
+
+    /* Toast */
+    .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        transform: translate(-50%, 40px);
+        background: #22252e;
+        border: 1px solid var(--card-border);
+        color: var(--text);
+        padding: 10px 16px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s, transform .2s;
+        max-width: 90vw;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .toast.err { border-color: var(--danger); }
+
+    /* Color wheel modal */
+    .modal-bg {
+        position: fixed; inset: 0;
+        background: rgba(5,6,10,0.7);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 20;
+    }
+    .modal-bg.show { display: flex; }
+    .modal {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius);
+        padding: 20px;
+        width: min(340px, 92vw);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+    .modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+    .modal-head h2 { margin: 0; font-size: 16px; font-weight: 600; }
+    .close {
+        background: transparent;
+        border: none;
+        color: var(--muted);
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+        padding: 4px 8px;
+    }
+    .close:hover { color: var(--text); }
+    .wheel-wrap {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 12px;
+    }
+    #wheel {
+        touch-action: none;
+        cursor: crosshair;
+        border-radius: 50%;
+    }
+    @media (max-width: 360px) {
+        h1 { font-size: 20px; }
+        .swatch { width: 60px; height: 60px; }
+        .slider-row { grid-template-columns: 60px 1fr 46px; gap: 10px; }
+    }
+</style>
 </head>
 <body>
-    <h1>
-        LED Strip Control 
-        <br>
-        <a href="/update" style="font-size: x-large;">OTA Update</a>
-    </h1>
-    <div>
-        <p>
+<div class="wrap">
+    <header>
+        <h1>LED Strip Control</h1>
+        <a class="ota" href="/update" title="OTA Firmware Update">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
+            OTA
+        </a>
+    </header>
 
-        </p>
+    <section class="card">
+        <div class="color-head">
+            <div id="swatch" class="swatch" role="button" tabindex="0" aria-label="Open color wheel"></div>
+            <div class="color-meta">
+                <span class="hex" id="hexLabel">#000000</span>
+                <span class="hint">Tap swatch for wheel</span>
+            </div>
+        </div>
+
+        <div class="slider-row">
+            <label for="hue">Hue</label>
+            <input type="range" id="hue" min="0" max="360" value="0">
+            <output id="hueOut">0&deg;</output>
+        </div>
+        <div class="slider-row">
+            <label for="saturation">Sat</label>
+            <input type="range" id="saturation" min="0" max="100" value="100">
+            <output id="satOut">100%</output>
+        </div>
+        <div class="slider-row">
+            <label for="brightness">Bright</label>
+            <input type="range" id="brightness" min="0" max="100" value="100">
+            <output id="brightOut">100%</output>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="row">
+            <div>
+                <div class="label">Night Mode</div>
+                <div class="sub">Dim output, keep colors warm</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" id="night-mode">
+                <span class="track"></span>
+            </label>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="ping-row">
+            <button id="pingButton" class="ping-btn" type="button">
+                <span class="ping-dot" id="pingDot"></span>
+                Ping device
+            </button>
+        </div>
+    </section>
+</div>
+
+<div id="modal" class="modal-bg" aria-hidden="true">
+    <div class="modal" role="dialog" aria-label="Color wheel">
+        <div class="modal-head">
+            <h2>Pick a color</h2>
+            <button class="close" id="modalClose" aria-label="Close">&times;</button>
+        </div>
+        <div class="wheel-wrap">
+            <canvas id="wheel" width="260" height="260"></canvas>
+        </div>
+        <div class="slider-row">
+            <label for="brightness2">Bright</label>
+            <input type="range" id="brightness2" min="0" max="100" value="100">
+            <output id="brightOut2">100%</output>
+        </div>
     </div>
-    <form id="night-mode-form">
-        <label for="night-mode">Night Mode:</label>
-        <input type="checkbox" id="night-mode" name="night-mode">
-    </form>
-    <div>
-        <p></p> <!-- Empty Space -->
-    </div>
-    <form id="colorForm">
-        <label for="hue">Hue:</label>
-        <input type="number" id="hue" name="hue" min="0" max="360" required>
-        <br>
-        <label for="saturation">Saturation:</label>
-        <input type="number" id="saturation" name="saturation" min="0" max="100" value="100">
-        <br>
-        <label for="brightness">Brightness:</label>
-        <input type="number" id="brightness" name="brightness" min="0" max="100" value="100">
-        <br>
-        <button type="submit">Set Color</button>
-    </form>
-    <button id="pingButton">Ping</button>
-    <div id="response"></div>
+</div>
 
-    <script>
-        fetch('/api/color')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('hue').value = data.hue;
-            document.getElementById('saturation').value = data.saturation;
-            document.getElementById('brightness').value = data.brightness;
-        })
+<div id="toast" class="toast"></div>
 
-        fetch('/api/night-mode')
-        .then(response => response.json())
-        .then(data => {
-            const element = document.getElementById('night-mode');
-            element.checked = data.nightMode;
-            // document.getElementById('night-mode').checked = data.nightMode;
-        })
+<script>
+(() => {
+    const $ = (id) => document.getElementById(id);
+    const hueEl = $('hue'), satEl = $('saturation'), brightEl = $('brightness');
+    const hueOut = $('hueOut'), satOut = $('satOut'), brightOut = $('brightOut');
+    const swatch = $('swatch'), hexLabel = $('hexLabel');
+    const nightToggle = $('night-mode');
+    const pingBtn = $('pingButton'), pingDot = $('pingDot');
+    const toast = $('toast');
+    const modal = $('modal'), modalClose = $('modalClose');
+    const wheel = $('wheel'), wctx = wheel.getContext('2d');
+    const bright2 = $('brightness2'), brightOut2 = $('brightOut2');
 
-        document.getElementById('night-mode').addEventListener('change', function(event) {
-            fetch('/api/night-mode', {
+    // --- HSV -> RGB/hex ---
+    function hsvToRgb(h, s, v) {
+        s /= 100; v /= 100;
+        const c = v * s;
+        const hh = (h % 360) / 60;
+        const x = c * (1 - Math.abs(hh % 2 - 1));
+        let r=0, g=0, b=0;
+        if (hh < 1)      { r=c; g=x; }
+        else if (hh < 2) { r=x; g=c; }
+        else if (hh < 3) { g=c; b=x; }
+        else if (hh < 4) { g=x; b=c; }
+        else if (hh < 5) { r=x; b=c; }
+        else             { r=c; b=x; }
+        const m = v - c;
+        return [Math.round((r+m)*255), Math.round((g+m)*255), Math.round((b+m)*255)];
+    }
+    function hsvToHex(h, s, v) {
+        const [r,g,b] = hsvToRgb(h, s, v);
+        return '#' + [r,g,b].map(n => n.toString(16).padStart(2,'0')).join('').toUpperCase();
+    }
+
+    // --- UI sync ---
+    function currentHSV() {
+        return [+hueEl.value, +satEl.value, +brightEl.value];
+    }
+    function paintUI() {
+        const [h, s, v] = currentHSV();
+        const hex = hsvToHex(h, s, v);
+        hueOut.textContent = h + '°';
+        satOut.textContent = s + '%';
+        brightOut.textContent = v + '%';
+        brightOut2.textContent = v + '%';
+        hexLabel.textContent = hex;
+        swatch.style.background = hex;
+        swatch.style.boxShadow = `0 4px 24px -4px ${hex}, inset 0 0 0 2px rgba(255,255,255,0.05)`;
+        document.documentElement.style.setProperty('--accent', hex);
+        // Sat gradient: gray (at current v) -> saturated hue at current v
+        const satLo = hsvToHex(h, 0, v);
+        const satHi = hsvToHex(h, 100, v);
+        satEl.style.background = `linear-gradient(90deg, ${satLo}, ${satHi})`;
+        // Brightness gradient: black -> fully lit h/s
+        const brHi = hsvToHex(h, s, 100);
+        const bg = `linear-gradient(90deg, #000, ${brHi})`;
+        brightEl.style.background = bg;
+        bright2.style.background = bg;
+        drawMarker();
+    }
+
+    // --- Persistence + shared state ---
+    const LS_KEY = 'ledstrip.lastColor';
+    let currentNightMode = false;
+    let lastLocalChange = 0;
+    function saveColorLocal() {
+        try {
+            const [h, s, v] = currentHSV();
+            localStorage.setItem(LS_KEY, JSON.stringify({ h, s, v }));
+        } catch (_) {}
+    }
+    function loadColorLocal() {
+        try {
+            const raw = localStorage.getItem(LS_KEY);
+            return raw ? JSON.parse(raw) : null;
+        } catch (_) { return null; }
+    }
+
+    // --- Debounced POST (skipped while night mode is on) ---
+    let postTimer = null, inFlight = false, pending = null;
+    async function doPost() {
+        if (currentNightMode) return; // don't command device while it's "off"
+        if (inFlight) { pending = true; return; }
+        inFlight = true;
+        const [h, s, v] = currentHSV();
+        try {
+            const r = await fetch('/api/color', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ nightMode: event.target.checked })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('response').innerText = JSON.stringify(data);
-            })
-            .catch(error => {
-                document.getElementById('response').innerText = 'Error: ' + error;
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ hue: h, saturation: s, brightness: v })
             });
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+        } catch (e) {
+            showToast('Color update failed: ' + e.message, true);
+        } finally {
+            inFlight = false;
+            if (pending) { pending = false; doPost(); }
+        }
+    }
+    function scheduleColorPost() {
+        lastLocalChange = Date.now();
+        saveColorLocal();
+        clearTimeout(postTimer);
+        postTimer = setTimeout(doPost, 150);
+    }
+
+    // --- Toast ---
+    let toastTimer = null;
+    function showToast(msg, isErr) {
+        toast.textContent = msg;
+        toast.classList.toggle('err', !!isErr);
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    // --- Slider wiring ---
+    function onSliderInput(src) {
+        if (src === bright2) brightEl.value = bright2.value;
+        else if (src === brightEl) bright2.value = brightEl.value;
+        paintUI();
+        scheduleColorPost();
+    }
+    [hueEl, satEl, brightEl, bright2].forEach(el => {
+        el.addEventListener('input', () => onSliderInput(el));
+    });
+
+    // --- Night mode ---
+    async function postNightMode(on) {
+        const r = await fetch('/api/night-mode', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nightMode: on })
         });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+    }
+    nightToggle.addEventListener('change', async () => {
+        const want = nightToggle.checked;
+        try {
+            await postNightMode(want);
+            currentNightMode = want;
+            // When turning night mode off, push the UI's remembered color so
+            // the strip lights up with what the user has in the sliders,
+            // overriding the server's lastMode restore.
+            if (!want) {
+                clearTimeout(postTimer);
+                await doPost();
+            }
+        } catch (e) {
+            nightToggle.checked = !want;
+            showToast('Night mode failed: ' + e.message, true);
+        }
+    });
 
-        document.getElementById('colorForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const hue = document.getElementById('hue').value;
-            const saturation = document.getElementById('saturation').value;
-            const brightness = document.getElementById('brightness').value;
+    // --- Ping ---
+    pingBtn.addEventListener('click', async () => {
+        pingBtn.classList.remove('ok', 'err');
+        void pingBtn.offsetWidth;
+        try {
+            const r = await fetch('/api/ping');
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            const data = await r.json();
+            if (data.message === 'Pong') {
+                pingBtn.classList.add('ok');
+            } else {
+                throw new Error('Unexpected: ' + JSON.stringify(data));
+            }
+        } catch (e) {
+            pingBtn.classList.add('err');
+            showToast('Ping failed: ' + e.message, true);
+        }
+    });
 
-            fetch('/api/color', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ hue: parseInt(hue), saturation: parseInt(saturation), brightness: parseInt(brightness) })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('response').innerText = JSON.stringify(data);
-            })
-            .catch(error => {
-                document.getElementById('response').innerText = 'Error: ' + error;
-            });
-        });
-
-        document.getElementById('pingButton').addEventListener('click', async function() {
-            fetch('/api/ping')
-            .then(response => response.json()
-            .then(data => {
-                document.getElementById('response').innerText = JSON.stringify(data);
-                if (data.message === 'Pong') {
-                    document.getElementById('pingButton').style.backgroundColor = 'green';
+    // --- Color wheel ---
+    const WSIZE = 260, WR = WSIZE / 2;
+    let wheelImage = null;
+    function drawWheel() {
+        if (!wheelImage) {
+            wheelImage = wctx.createImageData(WSIZE, WSIZE);
+            const data = wheelImage.data;
+            for (let y = 0; y < WSIZE; y++) {
+                for (let x = 0; x < WSIZE; x++) {
+                    const dx = x - WR, dy = y - WR;
+                    const r = Math.sqrt(dx*dx + dy*dy);
+                    const idx = (y * WSIZE + x) * 4;
+                    if (r > WR) { data[idx+3] = 0; continue; }
+                    let ang = Math.atan2(dy, dx) * 180 / Math.PI;
+                    if (ang < 0) ang += 360;
+                    const sat = Math.min(100, (r / WR) * 100);
+                    const [R, G, B] = hsvToRgb(ang, sat, 100);
+                    data[idx] = R; data[idx+1] = G; data[idx+2] = B; data[idx+3] = 255;
                 }
-            })
-            .catch(error => {
-                document.getElementById('pingButton').style.backgroundColor = 'red';
-                document.getElementById('response').innerText = 'Error: ' + error;
-            }));
-        });
-    </script>
+            }
+        }
+        wctx.putImageData(wheelImage, 0, 0);
+    }
+    function drawMarker() {
+        if (!modal.classList.contains('show')) return;
+        drawWheel();
+        const [h, s] = currentHSV();
+        const r = (s / 100) * WR;
+        const a = h * Math.PI / 180;
+        const x = WR + r * Math.cos(a);
+        const y = WR + r * Math.sin(a);
+        wctx.beginPath();
+        wctx.arc(x, y, 8, 0, Math.PI * 2);
+        wctx.strokeStyle = '#fff';
+        wctx.lineWidth = 2.5;
+        wctx.shadowColor = 'rgba(0,0,0,0.5)';
+        wctx.shadowBlur = 4;
+        wctx.stroke();
+        wctx.shadowBlur = 0;
+    }
+    function handleWheelPointer(ev) {
+        ev.preventDefault();
+        const rect = wheel.getBoundingClientRect();
+        const scale = WSIZE / rect.width;
+        const x = (ev.clientX - rect.left) * scale - WR;
+        const y = (ev.clientY - rect.top) * scale - WR;
+        const r = Math.min(WR, Math.sqrt(x*x + y*y));
+        let ang = Math.atan2(y, x) * 180 / Math.PI;
+        if (ang < 0) ang += 360;
+        hueEl.value = Math.round(ang);
+        satEl.value = Math.round((r / WR) * 100);
+        paintUI();
+        scheduleColorPost();
+    }
+    let wheelDragging = false;
+    wheel.addEventListener('pointerdown', (e) => {
+        wheelDragging = true;
+        wheel.setPointerCapture(e.pointerId);
+        handleWheelPointer(e);
+    });
+    wheel.addEventListener('pointermove', (e) => { if (wheelDragging) handleWheelPointer(e); });
+    wheel.addEventListener('pointerup', (e) => {
+        wheelDragging = false;
+        try { wheel.releasePointerCapture(e.pointerId); } catch (_) {}
+    });
+
+    function openModal() {
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+        drawWheel();
+        drawMarker();
+    }
+    function closeModal() {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+    swatch.addEventListener('click', openModal);
+    swatch.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); }
+    });
+    modalClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // --- State sync (initial load + polling) ---
+    function applyColorFromServer(c) {
+        hueEl.value = c.hue ?? 0;
+        satEl.value = c.saturation ?? 100;
+        brightEl.value = c.brightness ?? 100;
+        bright2.value = brightEl.value;
+    }
+    async function syncFromServer(isInitial) {
+        // Don't clobber active user interaction.
+        if (!isInitial) {
+            if (inFlight || pending) return;
+            if (Date.now() - lastLocalChange < 800) return;
+            if (wheelDragging) return;
+        }
+        let colorRes, nightRes;
+        try {
+            [colorRes, nightRes] = await Promise.all([
+                fetch('/api/color'),
+                fetch('/api/night-mode')
+            ]);
+        } catch (e) {
+            if (isInitial) showToast('Could not load state: ' + e.message, true);
+            return;
+        }
+        let serverNight = currentNightMode;
+        if (nightRes && nightRes.ok) {
+            try {
+                const n = await nightRes.json();
+                serverNight = !!n.nightMode;
+            } catch (_) {}
+        }
+        // Update toggle if it diverges from server (e.g. external change).
+        if (nightToggle.checked !== serverNight) nightToggle.checked = serverNight;
+        currentNightMode = serverNight;
+
+        // User may have started interacting during the awaited fetch —
+        // re-check before overwriting slider state.
+        const userBusy = !isInitial && (
+            inFlight || pending || wheelDragging ||
+            Date.now() - lastLocalChange < 800
+        );
+
+        // Only sync color sliders when the strip is actually lit — during
+        // night mode the API returns (0,0,0) which would wipe the user's pick.
+        if (!userBusy && !serverNight && colorRes && colorRes.ok) {
+            try {
+                const c = await colorRes.json();
+                applyColorFromServer(c);
+                saveColorLocal();
+            } catch (_) {}
+        } else if (isInitial && serverNight) {
+            // Night mode is on at page load — restore the last color the user
+            // picked on this browser so the sliders aren't stuck at zero.
+            const cached = loadColorLocal();
+            if (cached) applyColorFromServer({ hue: cached.h, saturation: cached.s, brightness: cached.v });
+        }
+        paintUI();
+    }
+
+    syncFromServer(true);
+    setInterval(() => syncFromServer(false), 3000);
+})();
+</script>
 </body>
 </html>
