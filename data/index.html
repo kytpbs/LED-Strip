@@ -83,7 +83,7 @@
         border: 1px solid rgba(255,255,255,0.08);
         box-shadow: 0 4px 24px -4px var(--accent), inset 0 0 0 2px rgba(255,255,255,0.05);
         cursor: pointer;
-        transition: transform .12s ease;
+        transition: transform .12s ease, background-color .08s linear, box-shadow .08s linear;
         flex: none;
         position: relative;
     }
@@ -485,9 +485,11 @@
     function cancelAnim() {
         if (animRAF !== null) { cancelAnimationFrame(animRAF); animRAF = null; }
     }
+
     function shortestHueDelta(from, to) {
         return ((to - from + 540) % 360) - 180;
     }
+
     function animateToColor(h, s, v) {
         const [h0, s0, v0] = currentHSV();
         if (h0 === h && s0 === s && v0 === v) { cancelAnim(); return; }
@@ -529,6 +531,7 @@
             if (pending) { pending = false; doPost(); }
         }
     }
+
     function scheduleColorPost() {
         cancelAnim();
         lastLocalChange = Date.now();
@@ -632,6 +635,7 @@
         }
         wctx.putImageData(wheelImage, 0, 0);
     }
+
     function drawMarker() {
         if (!modal.classList.contains('show')) return;
         drawWheel();
@@ -649,6 +653,7 @@
         wctx.stroke();
         wctx.shadowBlur = 0;
     }
+
     function handleWheelPointer(ev) {
         ev.preventDefault();
         const rect = wheel.getBoundingClientRect();
@@ -663,6 +668,7 @@
         paintUI();
         scheduleColorPost();
     }
+
     let wheelDragging = false;
     wheel.addEventListener('pointerdown', (e) => {
         wheelDragging = true;
@@ -681,10 +687,12 @@
         drawWheel();
         drawMarker();
     }
+
     function closeModal() {
         modal.classList.remove('show');
         modal.setAttribute('aria-hidden', 'true');
     }
+
     swatch.addEventListener('click', openModal);
     swatch.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); }
@@ -694,64 +702,75 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
     // --- State sync (initial load + polling) ---
-    function applyColorFromServer(c) {
+    function applyColorSnap(c) {
         hueEl.value = c.hue ?? 0;
         satEl.value = c.saturation ?? 100;
         brightEl.value = c.brightness ?? 100;
         bright2.value = brightEl.value;
     }
+
+    let pollInFlight = false;
     async function syncFromServer(isInitial) {
-        // Don't clobber active user interaction.
         if (!isInitial) {
+            if (pollInFlight) return;
             if (inFlight || pending) return;
             if (Date.now() - lastLocalChange < 800) return;
             if (wheelDragging) return;
         }
-        let colorRes, nightRes, modeRes;
+        pollInFlight = true;
         try {
-            [colorRes, nightRes, modeRes] = await Promise.all([
-                fetch('/api/color'),
-                fetch('/api/night-mode'),
-                fetch('/api/mode')
-            ]);
-        } catch (e) {
-            if (isInitial) showToast('Could not load state: ' + e.message, true);
-            return;
-        }
-        if (nightRes && nightRes.ok) {
+            let colorRes, nightRes, modeRes;
             try {
-                const n = await nightRes.json();
-                const serverNight = !!n.nightMode;
-                if (nightToggle.checked !== serverNight) nightToggle.checked = serverNight;
-            } catch (_) {}
-        }
+                [colorRes, nightRes, modeRes] = await Promise.all([
+                    fetch('/api/color'),
+                    fetch('/api/night-mode'),
+                    fetch('/api/mode')
+                ]);
+            } catch (e) {
+                if (isInitial) showToast('Could not load state: ' + e.message, true);
+                return;
+            }
+            if (nightRes && nightRes.ok) {
+                try {
+                    const n = await nightRes.json();
+                    const serverNight = !!n.nightMode;
+                    if (nightToggle.checked !== serverNight) nightToggle.checked = serverNight;
+                } catch (_) {}
+            }
 
-        // User may have started interacting during the awaited fetch —
-        // re-check before overwriting slider state.
-        const userBusy = !isInitial && (
-            inFlight || pending || wheelDragging ||
-            Date.now() - lastLocalChange < 800
-        );
+            // User may have started interacting during the awaited fetch —
+            // re-check before overwriting slider state.
+            const userBusy = !isInitial && (
+                inFlight || pending || wheelDragging ||
+                Date.now() - lastLocalChange < 800
+            );
 
-        if (!userBusy && colorRes && colorRes.ok) {
-            try {
-                const c = await colorRes.json();
-                applyColorFromServer(c);
-            } catch (_) {}
+            if (!userBusy && colorRes && colorRes.ok) {
+                try {
+                    const c = await colorRes.json();
+                    if (isInitial) {
+                        applyColorSnap(c);
+                    } else {
+                        animateToColor(c.hue ?? 0, c.saturation ?? 100, c.brightness ?? 100);
+                    }
+                } catch (_) {}
+            }
+            if (modeRes && modeRes.ok) {
+                try {
+                    const m = await modeRes.json();
+                    if (typeof m.mode === 'number' && !userBusy) {
+                        modeSelect.value = String(m.mode);
+                    }
+                } catch (_) {}
+            }
+            paintUI();
+        } finally {
+            pollInFlight = false;
         }
-        if (modeRes && modeRes.ok) {
-            try {
-                const m = await modeRes.json();
-                if (typeof m.mode === 'number' && !userBusy) {
-                    modeSelect.value = String(m.mode);
-                }
-            } catch (_) {}
-        }
-        paintUI();
     }
 
     syncFromServer(true);
-    setInterval(() => syncFromServer(false), 3000);
+    setInterval(() => syncFromServer(false), 2000);
 })();
 </script>
 </body>
